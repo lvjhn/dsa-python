@@ -1,0 +1,34 @@
+COMMON DATA STRUCTURES
+==============================================================================================
+
+1. Stacks 
+2. Linked Lists 
+	- Singly
+	- Doubly
+	- Circular 
+3. Hash Tables 
+	- Collision Resolutions: 
+		- Chaining
+		- Open Addressing 
+			- Linear Probing
+			- Quadratic Probing
+	- Hash Functions: 
+		- Division Method
+		- Multiplication Method
+4. Heaps 
+	- Binary Heap
+	- Fibonacci Heap 
+5. Queues 
+	- FIFO Queue
+	- Priority Queue 
+6. Search Trees 
+	- Standard BST
+	- AVL Tree
+	- Red-Black Tree	
+	- B-Tree 
+7. Graphs 
+	- Adjacency List 
+	- Adjacency Matrix 
+	- Adjacency Map
+
+==============================================================================================	
