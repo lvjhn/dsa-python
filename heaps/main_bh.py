@@ -32,6 +32,7 @@ def main_b():
         "e" : 5, 
         "f" : 6, 
         "g" : 7, 
+        "h" : 8
     }
 
     heap.heapify_up(arr)

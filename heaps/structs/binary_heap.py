@@ -116,6 +116,10 @@ class BinaryHeap:
             i = i // 2            
 
     def delete(self):
+        if len(self.items) == 1: 
+            self.items = [] 
+            return
+        
         arr = self.items
         n = len(arr)
         l = n - 1 
@@ -129,16 +133,21 @@ class BinaryHeap:
             l = 2 * i + 1 
             r = 2 * i + 2
 
+            m = i
+
             if self.comparator(arr[l], arr[i]): 
-                self.swap_key_map(l, i)
+                # self.swap_key_map(l, i)
                 arr[l], arr[i] = arr[i], arr[l] 
-                i = l 
-            elif self.comparator(arr[r], arr[i]): 
-                self.swap_key_map(r, i) 
+                m = l 
+            if self.comparator(arr[r], arr[i]): 
+                # self.swap_key_map(r, i) 
                 arr[r], arr[i] = arr[i], arr[r]
-                i = r
-            else: 
+                m = r
+            
+            if m == i: 
                 break
+            else: 
+                l = m
 
     def update(self, key, new_val): 
         arr = self.items 
