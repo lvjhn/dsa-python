@@ -32,11 +32,6 @@ def main_b():
         "e" : 5, 
         "f" : 6, 
         "g" : 7, 
-        "h" : 8, 
-        "i" : 9, 
-        "j" : 10, 
-        "k" : 11, 
-        "l" : 12
     }
 
     heap.heapify_up(arr)
@@ -45,13 +40,18 @@ def main_b():
     print(list(heap.values()))
     print(heap.key_map)
 
-    print("Updating 4 to value -10")
-    heap.update("i", -10)
+    print("Updating f to value 10")
+    heap.update("f", 10)
 
     print(list(heap.keys()))
     print(list(heap.values()))
     print(heap.key_map)
 
-    print(heap.top().key)
+    print("--- Heap Sort Demo ---")
+
+    n = heap.size()
+    for i in range(n): 
+        print(heap.top().value)
+        heap.delete()
 
 main_b()

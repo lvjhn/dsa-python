@@ -36,6 +36,7 @@ class BinaryHeap:
             return self.value(a) < self.value(b)
         elif self.type == "max":
             return self.value(a) > self.value(b)
+        return None
 
     def keyfy(self, items): 
         if type(items) is list: 
@@ -119,7 +120,7 @@ class BinaryHeap:
         n = len(arr)
         l = n - 1 
         
-        arr[0] = l
+        arr[0] = arr[l]
         arr.pop(l)
         n = len(arr)
 
@@ -127,15 +128,15 @@ class BinaryHeap:
         while 2 * i + 2 < n: 
             l = 2 * i + 1 
             r = 2 * i + 2
-            
+
             if self.comparator(arr[l], arr[i]): 
                 self.swap_key_map(l, i)
-                arr[l], arr[i] = arr[l], arr[i] 
+                arr[l], arr[i] = arr[i], arr[l] 
                 i = l 
             elif self.comparator(arr[r], arr[i]): 
                 self.swap_key_map(r, i) 
-                arr[r], arr[i] = arr[i], arr[j]
-                i = j
+                arr[r], arr[i] = arr[i], arr[r]
+                i = r
             else: 
                 break
 
@@ -176,7 +177,6 @@ class BinaryHeap:
         i = self.key_map[key] 
           
         arr[i].value = value
-        arr.pop(l)
         n = len(arr)
 
         while 2 * i + 2 < n: 
@@ -185,12 +185,12 @@ class BinaryHeap:
             
             if self.comparator(arr[l], arr[i]): 
                 self.swap_key_map(l, i)
-                arr[l], arr[i] = arr[l], arr[i] 
+                arr[l], arr[i] = arr[i], arr[l] 
                 i = l 
             elif self.comparator(arr[r], arr[i]): 
                 self.swap_key_map(r, i) 
-                arr[r], arr[i] = arr[i], arr[j]
-                i = j
+                arr[r], arr[i] = arr[i], arr[r]
+                i = r
             else: 
                 break
             
@@ -202,8 +202,9 @@ class BinaryHeap:
         for item in self.items: 
             yield item.value
 
-
     def top(self): 
         return self.items[0]
 
-              
+    def size(self): 
+        return len(self.items)
+        
