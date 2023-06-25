@@ -253,6 +253,7 @@ class CSLL:
             self.tail = None 
         else:
             predecessor = self.predecessor(self.tail) 
+            predecessor.next = None
             self.tail = predecessor 
 
             # reattach head to tail 

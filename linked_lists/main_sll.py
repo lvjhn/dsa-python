@@ -14,4 +14,7 @@ sll.insert(3, 40)
 sll.insert(4, 50)
 sll.insert(5, 60)
 
+sll.delete_tail()
+
 sll.traverse(lambda n, i: print(n.value))
+

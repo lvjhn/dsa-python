@@ -242,8 +242,9 @@ class SLL:
         if self.head == self.tail: 
             self.head = None 
             self.tail = None 
-        else 
-            predecessor = self.predecessor(self.tail) 
+        else:
+            predecessor = self.predecessor(self.tail)
+            predecessor.next = None 
             self.tail = predecessor 
 
         # decrease size of list 
