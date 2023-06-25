@@ -6,7 +6,7 @@
 			- does not depend on third-party packages or other files 
 			- can be used as is
 		
-		* uses Python lists 
+		* printable / narrow width
 
 		* implements common operations 
 			- push(value)
@@ -14,7 +14,6 @@
 			- pop()
 			- size() 
 
-		* printable / narrow width
 ''' 
 
 class Stack: 
