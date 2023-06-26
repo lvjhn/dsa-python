@@ -12,9 +12,9 @@
             https://devashish-iitg.medium.com/heap-sort-heapify-up-or-down-5fd35adfff39
         
 		* implements common operations
-            - value() 
-            - comparator() 
-            - keyfy(self, items) 
+            - value(x) 
+            - comparator(a, b) 
+            - keyfy(items) 
             - swap_key_map(i, j)
             - heapify_up(items, keyfy) 
             - heapify_down(items, keyfy) 
@@ -23,10 +23,10 @@
             - update(key, new_value)
             - update_a(key, value)
             - update_b(key, value)  
-            - keys(self)
-            - values(self)
-            - top(self)
-            - size(self)
+            - keys()
+            - values()
+            - top()
+            - size()
 
 ''' 
 
@@ -125,6 +125,7 @@ class BinaryHeap:
         arr = self.items
         arr.append(item)
         i = len(arr) - 1 
+        self.key_map[key] = i  
         while i >= 0: 
             if self.comparator(arr[i], arr[i // 2]): 
                 self.swap_key_map(i // 2, i)
@@ -143,9 +144,15 @@ class BinaryHeap:
         l = n - 1 
         
         arr[0] = arr[l]
-        arr.pop(l)
-        n = len(arr)
 
+        # delete previous min and end of array
+        del self.key_map[arr[0].key]
+
+        # update key map of end of array
+        self.key_map[arr[l].key] = 0
+        arr.pop(l)
+
+        n = len(arr)
         i = 0 
         while 2 * i + 2 < n: 
             l = 2 * i + 1 
@@ -154,11 +161,11 @@ class BinaryHeap:
             m = i
 
             if self.comparator(arr[l], arr[i]): 
-                # self.swap_key_map(l, i)
+                self.swap_key_map(l, i)
                 arr[l], arr[i] = arr[i], arr[l] 
                 m = l 
             if self.comparator(arr[r], arr[i]): 
-                # self.swap_key_map(r, i) 
+                self.swap_key_map(r, i) 
                 arr[r], arr[i] = arr[i], arr[r]
                 m = r
             

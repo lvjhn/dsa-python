@@ -13,21 +13,18 @@
             - https://www.programiz.com/dsa/decrease-key-and-delete-node-from-a-fibonacci-heap
 
 		* implements common operations
-            - value() 
-            - comparator() 
-            - keyfy(self, items) 
+            - value(x) 
+            - comparator(a, b) 
             - swap_key_map(i, j)
-            - heapify_up(items, keyfy) 
-            - heapify_down(items, keyfy) 
             - insert(key, value)
             - delete() 
             - update(key, new_value)
             - update_a(key, value)
             - update_b(key, value)  
-            - keys(self)
-            - values(self)
-            - top(self)
-            - size(self)
+            - keys()
+            - values()
+            - top()
+            - size()
 ''' 
 
 class FibonacciTree: 
@@ -36,7 +33,7 @@ class FibonacciTree:
         self.value = value 
         self.data = data
         self.children = [] 
-        self.order = 0 
+        self.order = 0
 
     def add_at_end(self, tree): 
         self.children.append(tree)
@@ -48,16 +45,47 @@ class FibonacciHeap:
         self.least = None 
         self.count = 0 
         self.type_ = type_
+        self.key_no = 0 
+        self.key_map = {} 
 
-    def comparator(self, a, b):
+    def value(self, x): 
+        return x.value
+
+    def comparator(self, a, b): 
         if self.type == "min": 
-            return a < b 
+            return self.value(a) < self.value(b)
         elif self.type == "max":
-            return a > b 
+            return self.value(a) > self.value(b)
         return None
 
-    def insert(self, key, value, data = None): 
-        new_tree = FibonacciTree(key, value, data)
-        self.trees.append(new_tree) 
+    def swap_key_map(i, j):
+        arr = self.items
+        self.key_map[arr[i].key] = j
+        self.key_map[arr[j].key] = i
 
-        if self.least is None or self.comparator(self.value())
+    def insert(key, value):
+        pass 
+
+    def delete():
+        pass 
+
+    def update(key, new_value):
+        pass 
+        
+    def update_a(key, value):
+        pass 
+
+    def update_b(key, value):
+        pass 
+
+    def keys(self):
+        pass 
+
+    def values(self)
+        pass 
+
+    def top(self):
+        pass 
+
+    def size(self):
+        pass 
