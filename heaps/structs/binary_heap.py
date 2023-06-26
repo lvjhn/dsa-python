@@ -14,6 +14,8 @@
 		* implements common operations
             - value(x) 
             - comparator(a, b) 
+            - bubble_up(arr, i)
+            - bubble_down(arr, i)
             - keyfy(items) 
             - swap_key_map(i, j)
             - heapify_up(items, keyfy) 
@@ -41,7 +43,7 @@ class BinaryHeap:
         self.items = [] 
         self.type = type_
         self.key_no = 0  
-        self.key_map = {} 
+        self.key_map = {}
 
     def value(self, x): 
         return x.value
@@ -52,6 +54,38 @@ class BinaryHeap:
         elif self.type == "max":
             return self.value(a) > self.value(b)
         return None
+
+    def bubble_down(self, arr, i):
+        n = len(arr)
+
+        while 2 * i + 1 < n: 
+            l = 2 * i + 1 
+            r = 2 * i + 2
+            m = i
+
+            if l < n and self.comparator(arr[l], arr[m]): 
+                m = l 
+            if r < n and self.comparator(arr[r], arr[m]):                 
+                m = r
+            
+            if m == i: 
+                break
+            else: 
+                self.swap_key_map(m, i)
+                arr[m], arr[i] = arr[i], arr[m]
+                i = m
+
+        return arr  
+
+    def bubble_up(self, arr, i):  
+        while i > 0:
+            if self.comparator(arr[i], arr[i // 2]): 
+                self.swap_key_map(i // 2, i)
+                arr[i // 2], arr[i] = arr[i], arr[i // 2]
+                i = i // 2  
+            else:
+                break   
+        return arr
 
     def keyfy(self, items): 
         if type(items) is list: 
@@ -76,73 +110,54 @@ class BinaryHeap:
         self.key_map[arr[i].key] = j
         self.key_map[arr[j].key] = i
 
-    def heapify_up(self, items, keyfy = True): 
-        self.items = items
+    def heapify_up(self, arr, keyfy = True): 
+        self.items = arr
         if keyfy: 
-            items = self.keyfy(self.items)
-            self.items = items
-        n = len(items)
+            arr = self.keyfy(self.items)
+            self.items = arr
+        n = len(arr)
 
         for i in range(n): 
             j = i 
-            while j > 0 and self.comparator(items[j], items[j // 2]): 
-                self.swap_key_map(j // 2, j)
-                items[j // 2], items[j] = items[j], items[j // 2] 
-                j = j // 2 
-    
+            self.bubble_up(arr, j)
     
     def heapify_down(self, arr, keyfy = True):
         self.items = arr
         if keyfy:
-            items = self.keyfy(self.items)
-            self.items = items
+            arr = self.keyfy(self.items)
+            self.items = arr
         n = len(arr)
 
         for i in range(n // 2 - 1, -1, -1): 
             j = i 
-
-            while 2 * j + 2 < n: 
-                l = 2 * j + 1 
-                r = 2 * j + 2 
-                
-                m = None 
-
-                if self.comparator(items[l], items[j]): 
-                    self.swap_key_map(l, j)
-                    items[l], items[j] = items[j], items[l]
-                    j = l 
-
-                elif self.comparator(arr[r], arr[j]): 
-                    self.swap_key_map(r, j)
-                    items[r], items[j] = items[j], items[r]
-                    j = r 
-                
-                else: 
-                    break
+            self.bubble_down(arr, j)
+            
     
     def insert(self, key, value, data = None): 
         item = BinaryHeap_Item(key, value, data)
+        
+        # add element to heap
         arr = self.items
         arr.append(item)
         i = len(arr) - 1 
         self.key_map[key] = i  
-        while i >= 0: 
-            if self.comparator(arr[i], arr[i // 2]): 
-                self.swap_key_map(i // 2, i)
-                arr[i // 2], arr[i] = arr[i], arr[i // 2]
-                i = i // 2       
-            else: 
-                break     
+
+        # bubble up from last element 
+        self.bubble_up(arr, i)
 
     def delete(self):
+
+        # remove element from heap if the heap only has one element
         if len(self.items) == 1: 
             self.items = [] 
             return
-        
+
+        # find last element
         arr = self.items
         n = len(arr)
         l = n - 1 
         
+        # move last element from heap
         arr[0] = arr[l]
 
         # delete previous min and end of array
@@ -153,26 +168,9 @@ class BinaryHeap:
         arr.pop(l)
 
         n = len(arr)
-        i = 0 
-        while 2 * i + 2 < n: 
-            l = 2 * i + 1 
-            r = 2 * i + 2
-
-            m = i
-
-            if self.comparator(arr[l], arr[i]): 
-                self.swap_key_map(l, i)
-                arr[l], arr[i] = arr[i], arr[l] 
-                m = l 
-            if self.comparator(arr[r], arr[i]): 
-                self.swap_key_map(r, i) 
-                arr[r], arr[i] = arr[i], arr[r]
-                m = r
-            
-            if m == i: 
-                break
-            else: 
-                l = m
+        
+        # bubble down from root
+        self.bubble_down(arr, 0)
 
     def update(self, key, new_value): 
         arr = self.items 
@@ -197,36 +195,14 @@ class BinaryHeap:
         arr = self.items 
         i = self.key_map[key] 
         arr[i].value = value 
-        
-        while i > 0:
-            if self.comparator(arr[i], arr[i // 2]): 
-                self.swap_key_map(i // 2, i)
-                arr[i // 2], arr[i] = arr[i], arr[i // 2]
-            else:
-                break   
-            i = i // 2    
+        self.bubble_up(arr, i) 
 
     def update_b(self, key, value): 
         arr = self.items
         i = self.key_map[key] 
-          
         arr[i].value = value
         n = len(arr)
-
-        while 2 * i + 2 < n: 
-            l = 2 * i + 1 
-            r = 2 * i + 2
-            
-            if self.comparator(arr[l], arr[i]): 
-                self.swap_key_map(l, i)
-                arr[l], arr[i] = arr[i], arr[l] 
-                i = l 
-            elif self.comparator(arr[r], arr[i]): 
-                self.swap_key_map(r, i) 
-                arr[r], arr[i] = arr[i], arr[r]
-                i = r
-            else: 
-                break
+        self.bubble_down(arr, i)
             
     def keys(self): 
         for item in self.items: 

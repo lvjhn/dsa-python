@@ -41,8 +41,11 @@ def main_b():
     print(list(heap.values()))
     print(heap.key_map)
 
-    print("Updating f to value 10")
+    print("Updating values...")
     heap.update("f", 10)
+    heap.update("c", -20)
+
+    print("Inserting i with value 9")
     heap.insert("i", 9)
 
     print(list(heap.keys()))
@@ -54,7 +57,7 @@ def main_b():
 
     n = heap.size()
     for i in range(n): 
-        print(heap.top().value)
+        print(heap.top().key, heap.top().value)
         heap.delete()
 
 main_b()
