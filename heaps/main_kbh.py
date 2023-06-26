@@ -1,7 +1,7 @@
-from .structs.binary_heap import BinaryHeap  
+from .structs.kbh import KBH
 
 def main_a():
-    heap = BinaryHeap() 
+    heap = KBH() 
 
     arr = []
 
@@ -22,7 +22,7 @@ def main_a():
     print(heap.key_map)
 
 def main_b(): 
-    heap = BinaryHeap() 
+    heap = KBH() 
 
     arr = {
         "a" : 1,
@@ -48,6 +48,8 @@ def main_b():
     print("Inserting i with value 9")
     heap.insert("i", 9)
 
+    heap.delete("d")
+
     print(list(heap.keys()))
     print(list(heap.values()))
     print(heap.key_map)
@@ -58,6 +60,6 @@ def main_b():
     n = heap.size()
     for i in range(n): 
         print(heap.top().key, heap.top().value)
-        heap.delete()
+        heap.pop()
 
 main_b()

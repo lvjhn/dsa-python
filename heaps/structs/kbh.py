@@ -1,5 +1,5 @@
 ''' 
-    HEAP IMPLEMENTATION (PYTHON)
+    KEYED BINARY-HEAP IMPLEMENTATION (PYTHON)
 
     Notes: 
 		* isolated
@@ -12,7 +12,6 @@
             https://devashish-iitg.medium.com/heap-sort-heapify-up-or-down-5fd35adfff39
         
 		* implements common operations
-            - value(x) 
             - comparator(a, b) 
             - bubble_up(arr, i)
             - bubble_down(arr, i)
@@ -29,30 +28,29 @@
             - values()
             - top()
             - size()
+            - get_item(key) 
+            - set_item(key, data) 
 
 ''' 
 
-class BinaryHeap_Item: 
+class KBH_Item: 
     def __init__(self, key, value, data = None):
         self.key = key
         self.value = value 
         self.data = data
 
-class BinaryHeap: 
+class KBH: 
     def __init__(self, type_ = "min"): 
         self.items = [] 
         self.type = type_
         self.key_no = 0  
         self.key_map = {}
 
-    def value(self, x): 
-        return x.value
-
     def comparator(self, a, b): 
         if self.type == "min": 
-            return self.value(a) < self.value(b)
+            return a.value < b.value
         elif self.type == "max":
-            return self.value(a) > self.value(b)
+            return a.value > b.value
         return None
 
     def bubble_down(self, arr, i):
@@ -79,6 +77,7 @@ class BinaryHeap:
 
     def bubble_up(self, arr, i):  
         while i > 0:
+            print(f"Comparing {arr[i].value} with {arr[i // 2].value}")
             if self.comparator(arr[i], arr[i // 2]): 
                 self.swap_key_map(i // 2, i)
                 arr[i // 2], arr[i] = arr[i], arr[i // 2]
@@ -90,7 +89,7 @@ class BinaryHeap:
     def keyfy(self, items): 
         if type(items) is list: 
             for i in range(len(items)): 
-                items[i] = BinaryHeap_Item(self.key_no, items[i])
+                items[i] = KBH_Item(self.key_no, items[i])
                 self.key_map[items[i].key] = i
                 self.key_no += 1 
             return items
@@ -99,7 +98,7 @@ class BinaryHeap:
             new_items = []
             for key in items: 
                 value = items[key]
-                new_items.append(BinaryHeap_Item(key, value))
+                new_items.append(KBH_Item(key, value))
                 self.key_map[key] = i
                 self.key_no += 1 
                 i += 1
@@ -134,7 +133,7 @@ class BinaryHeap:
             
     
     def insert(self, key, value, data = None): 
-        item = BinaryHeap_Item(key, value, data)
+        item = KBH_Item(key, value, data)
         
         # add element to heap
         arr = self.items
@@ -145,7 +144,7 @@ class BinaryHeap:
         # bubble up from last element 
         self.bubble_up(arr, i)
 
-    def delete(self):
+    def pop(self):
 
         # remove element from heap if the heap only has one element
         if len(self.items) == 1: 
@@ -158,6 +157,7 @@ class BinaryHeap:
         l = n - 1 
         
         # move last element from heap
+        item = arr[0]
         arr[0] = arr[l]
 
         # delete previous min and end of array
@@ -172,29 +172,38 @@ class BinaryHeap:
         # bubble down from root
         self.bubble_down(arr, 0)
 
+        return item
+
+    def delete(self, key):
+        rem_val = float('-inf') if self.type == "min" else float("inf")
+        self.update(key, rem_val) 
+        self.pop()
+
     def update(self, key, new_value): 
         arr = self.items 
         if key not in self.key_map: 
             raise Exception(f"{key} is not in list.")
         i = self.key_map[key] 
-        curr_val = arr[i].value 
+
+        aux = KBH_Item(key, new_value, None)
+        item = arr[i] 
     
         if self.type == "min": 
-            if new_value > curr_val: 
-                self.update_b(key, new_value)
-            else:   
+            if self.comparator(aux, item):
                 self.update_a(key, new_value)
+            else:   
+                self.update_b(key, new_value)
 
         elif self.type == "max": 
-            if new_value > curr_val: 
-                self.update_a(key, new_value)
-            else: 
+            if self.comparator(aux, item): 
                 self.update_b(key, new_value)
+            else: 
+                self.update_a(key, new_value)
 
     def update_a(self, key, value): 
         arr = self.items 
         i = self.key_map[key] 
-        arr[i].value = value 
+        arr[i].value = value
         self.bubble_up(arr, i) 
 
     def update_b(self, key, value): 
@@ -203,6 +212,10 @@ class BinaryHeap:
         arr[i].value = value
         n = len(arr)
         self.bubble_down(arr, i)
+
+    def items(self): 
+        for item in self.items: 
+            yield item
             
     def keys(self): 
         for item in self.items: 
@@ -217,4 +230,21 @@ class BinaryHeap:
 
     def size(self): 
         return len(self.items)
-        
+
+    def get_data(self, key): 
+        return self.key_map[key].data
+
+    def set_data(self, key, data): 
+        self.key_map[key].data = data
+
+    def get_value(self, key): 
+        return self.get_item(key).value 
+
+    def set_value(self, key, value): 
+        self.key_map[key].value = value
+
+    def get_item(self, key): 
+        return self.key_map[key] 
+
+    def set_item(self, key, item): 
+        self.key_map[key] = item
