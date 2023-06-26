@@ -43,10 +43,12 @@ def main_b():
 
     print("Updating f to value 10")
     heap.update("f", 10)
+    heap.insert("i", 9)
 
     print(list(heap.keys()))
     print(list(heap.values()))
     print(heap.key_map)
+
 
     print("--- Heap Sort Demo ---")
 

@@ -10,16 +10,31 @@
 
         * reference: 
             https://devashish-iitg.medium.com/heap-sort-heapify-up-or-down-5fd35adfff39
-            
-
+        
 		* implements common operations
-            - heapify         
+            - value() 
+            - comparator() 
+            - keyfy(self, items) 
+            - swap_key_map(i, j)
+            - heapify_up(items, keyfy) 
+            - heapify_down(items, keyfy) 
+            - insert(key, value)
+            - delete() 
+            - update(key, new_value)
+            - update_a(key, value)
+            - update_b(key, value)  
+            - keys(self)
+            - values(self)
+            - top(self)
+            - size(self)
+
 ''' 
 
 class BinaryHeap_Item: 
-    def __init__(self, key, value):
+    def __init__(self, key, value, data = None):
         self.key = key
         self.value = value 
+        self.data = data
 
 class BinaryHeap: 
     def __init__(self, type_ = "min"): 
@@ -105,15 +120,18 @@ class BinaryHeap:
                 else: 
                     break
     
-    def insert(self, key, value): 
+    def insert(self, key, value, data = None): 
+        item = BinaryHeap_Item(key, value, data)
         arr = self.items
-        arr.append(value)
+        arr.append(item)
         i = len(arr) - 1 
         while i >= 0: 
             if self.comparator(arr[i], arr[i // 2]): 
                 self.swap_key_map(i // 2, i)
                 arr[i // 2], arr[i] = arr[i], arr[i // 2]
-            i = i // 2            
+                i = i // 2       
+            else: 
+                break     
 
     def delete(self):
         if len(self.items) == 1: 
@@ -149,7 +167,7 @@ class BinaryHeap:
             else: 
                 l = m
 
-    def update(self, key, new_val): 
+    def update(self, key, new_value): 
         arr = self.items 
         if key not in self.key_map: 
             raise Exception(f"{key} is not in list.")
@@ -157,16 +175,16 @@ class BinaryHeap:
         curr_val = arr[i].value 
     
         if self.type == "min": 
-            if new_val > curr_val: 
-                self.update_b(key, new_val)
+            if new_value > curr_val: 
+                self.update_b(key, new_value)
             else:   
-                self.update_a(key, new_val)
+                self.update_a(key, new_value)
 
         elif self.type == "max": 
-            if new_val > curr_val: 
-                self.update_a(key, new_val)
+            if new_value > curr_val: 
+                self.update_a(key, new_value)
             else: 
-                self.update_b(key, new_val)
+                self.update_b(key, new_value)
 
     def update_a(self, key, value): 
         arr = self.items 
