@@ -11,9 +11,6 @@ heap.insert("f", 60)
 heap.insert("g", 70)
 heap.insert("h", 80)
 
-print(heap.count)
-
-print(heap.min_node)
+print("No. of items before popping:", heap.count)
 heap.pop()
-
-print(heap.count)
+print("No. of items after popping:", heap.count)

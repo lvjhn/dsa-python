@@ -1,5 +1,6 @@
 ''' 
     KEYED FIBONACCI-HEAP IMPLEMENTATION (PYTHON)
+    (Modified Fibonacci-Heap with Custom Keys)
 
     Notes: 
 		* isolated
@@ -28,7 +29,7 @@
 ''' 
 import math 
 
-class KBH_Item: 
+class KFH_Item: 
     def __init__(self, key, value, data = None): 
         self.key = key 
         self.value = value 
@@ -101,7 +102,7 @@ class KFH:
             start = child
             right = None 
 
-            # transfer child of smallest element 
+            # transfer children of smallest element 
             if child is not None:
                 while True:
                     right = child.right 
@@ -109,7 +110,7 @@ class KFH:
                     self.count -= 1 
                     child.parent = None 
                     child = right 
-                    if child is start: 
+                    if child is None and child is start: 
                         break 
             
             # remove smallest element 
@@ -139,7 +140,7 @@ class KFH:
         node = self.min_node 
         
         if node is not None:
-            check = node 
+            check = self.min_node 
 
             while True: 
                 x = node 
@@ -147,8 +148,12 @@ class KFH:
 
                 while aux[order] is not None: 
                     y = aux[order] 
+
+                    print(order, len(aux), aux)
+
                     if self.comparator(x, y): 
                         x, y = y, x 
+
                     self.link(y, x)
                     check = x 
                     aux[order] = None
@@ -157,21 +162,15 @@ class KFH:
                 aux[order] = x
                 node = node.right 
 
-                if node is check:
+                if node is None and node is check:
                     break   
-        
-        min_ = None 
-        if self.type == "min": 
-            min_ = float("inf")
-        else: 
-            min_ = float("-inf") 
+
+        self.min_node = None
 
         for i in range(len(aux)): 
             if aux[i] is not None: 
                 self.insert_node(aux[i])
                 self.count -= 1
-
-        self.min_node = min_ 
     
     def link(self, y, x): 
         y.left.right = y.right 

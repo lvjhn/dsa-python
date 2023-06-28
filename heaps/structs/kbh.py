@@ -1,5 +1,6 @@
 ''' 
     KEYED BINARY-HEAP IMPLEMENTATION (PYTHON)
+    (Modified Binary Heap with Custom Keys)
 
     Notes: 
 		* isolated
