@@ -57,6 +57,8 @@ def main_b():
 
     print("--- Heap Sort Demo ---")
 
+    heap.display()
+
     n = heap.size()
     for i in range(n): 
         print(heap.top().key, heap.top().value)

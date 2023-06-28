@@ -13,18 +13,35 @@
             - https://rosettacode.org/wiki/Fibonacci_heap
 
 		* implements common operations
+            - iterate(head) 
             - comparator(a, b) 
             - swap_key_map(i, j)
-            - insert(key, value)
-            - delete() 
+            - merge_with_root_list(node) 
+            - merge_with_child_list(parent, node)
+            - remove_from_root_list(node) 
+            - remove_from_child_list(node) 
+            - insert(key, value, data) 
+            - insert_node(node) 
+            - pop() 
+            - consolidate() 
+            - heap_link(y, x) 
             - consolidate()
-            - update(key, new_value)
             - update_a(key, value)
             - update_b(key, value)  
+            - delete() 
             - keys()
             - values()
             - top()
             - size()
+            - get_data(key) 
+            - set_data(key) 
+            - get_value(key, value) 
+            - get_item(key) 
+            - set_item(key, item)
+            - display() 
+            - display_tree(root, level) 
+            - min(self) 
+            - max(self)
 ''' 
 import math 
 

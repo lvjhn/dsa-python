@@ -2,17 +2,7 @@
     KEYED BINARY-HEAP IMPLEMENTATION (PYTHON)
     (Modified Binary Heap with Custom Keys)
 
-    Notes: 
-		* isolated
-			- does not depend on third-party packages or other files 
-			- can be used as is
-        
-        * printable / narrow width
-
-        * reference: 
-            https://devashish-iitg.medium.com/heap-sort-heapify-up-or-down-5fd35adfff39
-        
-		* implements common operations
+   * implements common operations
             - comparator(a, b) 
             - bubble_up(arr, i)
             - bubble_down(arr, i)
@@ -20,7 +10,8 @@
             - swap_key_map(i, j)
             - heapify_up(items, keyfy) 
             - heapify_down(items, keyfy) 
-            - insert(key, value)
+            - insert(key, value, data)
+            - insert_node(node)
             - delete() 
             - update(key, new_value)
             - update_a(key, value)
@@ -29,8 +20,15 @@
             - values()
             - top()
             - size()
+            - get_data(key)
+            - set_data(key, data) 
+            - get_value(key) 
+            - set_value(key, value)
             - get_item(key) 
             - set_item(key, data) 
+            - display()
+            - min() 
+            - max() 
 
 ''' 
 
@@ -131,7 +129,6 @@ class KBH:
         for i in range(n // 2 - 1, -1, -1): 
             j = i 
             self.bubble_down(arr, j)
-            
     
     def insert(self, key, value, data = None): 
         item = KBH_Item(key, value, data)
@@ -249,3 +246,19 @@ class KBH:
 
     def set_item(self, key, item): 
         self.key_map[key] = item
+
+    def display(self): 
+        text = [] 
+        for item in self.items: 
+            text.append(f"({item.key}, {item.value}, {item.data})")
+        print(", ".join(text))
+
+    def min(self): 
+        if self.type != "min":
+            raise Exception("Not a minimum heap.") 
+        return self.top().value 
+
+    def max(self): 
+        if self.type != "max": 
+            raise Exception("Not a maximum heap.") 
+        return self.top().value 
