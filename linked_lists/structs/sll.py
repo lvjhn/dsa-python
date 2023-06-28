@@ -291,6 +291,13 @@ class SLL:
         return node.next.next 
          
     # --- TRAVERSAL OPERATIONS --- # 
+    def iterate(self): 
+        current = self.head 
+        i = 0 
+        while current is not None: 
+            yield current 
+            current = current.next 
+
     def traverse(self, cb): 
         current = self.head 
         i = 0 

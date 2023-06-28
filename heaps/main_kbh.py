@@ -64,4 +64,13 @@ def main_b():
         print(heap.top().key, heap.top().value)
         heap.pop()
 
-main_b()
+def main_c(): 
+    heap = KBH() 
+
+    for i in range(20000): 
+        heap.insert(i, i) 
+    
+    for i in range(20000): 
+        heap.pop()
+
+main_c()

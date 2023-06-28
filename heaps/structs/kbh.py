@@ -31,7 +31,11 @@
             - max() 
 
 ''' 
-
+class KBH_Item: 
+    def __init__(self, key, value, data = None):
+        self.key = key 
+        self.value = value 
+        self.data = data
 
 class KBH: 
     def __init__(self, type_ = "min"): 
@@ -71,7 +75,6 @@ class KBH:
 
     def bubble_up(self, arr, i):  
         while i > 0:
-            print(f"Comparing {arr[i].value} with {arr[i // 2].value}")
             if self.comparator(arr[i], arr[i // 2]): 
                 self.swap_key_map(i // 2, i)
                 arr[i // 2], arr[i] = arr[i], arr[i // 2]

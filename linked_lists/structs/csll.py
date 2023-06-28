@@ -303,6 +303,14 @@ class CSLL:
         return node.next.next 
          
     # --- TRAVERSAL OPERATIONS --- # 
+    def iterate(self):
+        current = self.head 
+        while True: 
+            yield current 
+            current = current.next
+            if current is self.head: 
+                break
+
     def traverse(self, cb): 
         current = self.head 
         i = 0 
