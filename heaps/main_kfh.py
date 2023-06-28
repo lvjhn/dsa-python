@@ -11,6 +11,8 @@ heap.insert("f", 60)
 heap.insert("g", 70)
 heap.insert("h", 80)
 
+heap.display()
+
 print("No. of items before popping:", heap.count)
 heap.pop()
 print("No. of items after popping:", heap.count)

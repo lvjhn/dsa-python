@@ -139,38 +139,6 @@ class KFH:
         aux = (int(math.log2(self.count)) + 1) * [None]
         node = self.min_node 
         
-        if node is not None:
-            check = self.min_node 
-
-            while True: 
-                x = node 
-                order = x.order 
-
-                while aux[order] is not None: 
-                    y = aux[order] 
-
-                    print(order, len(aux), aux)
-
-                    if self.comparator(x, y): 
-                        x, y = y, x 
-
-                    self.link(y, x)
-                    check = x 
-                    aux[order] = None
-                    order += 1 
-
-                aux[order] = x
-                node = node.right 
-
-                if node is None and node is check:
-                    break   
-
-        self.min_node = None
-
-        for i in range(len(aux)): 
-            if aux[i] is not None: 
-                self.insert_node(aux[i])
-                self.count -= 1
     
     def link(self, y, x): 
         y.left.right = y.right 
@@ -280,3 +248,19 @@ class KFH:
     def set_item(self, key, item): 
         self.key_map[key] = item
     
+    def display(self):
+        self.display_tree(self.min_node) 
+    
+    def display_tree(self, root, level = 0):
+        if root is None: 
+            return 
+
+        current = root 
+
+        while True:     
+            print(f"{'    ' * level} {current.value} {current.order}")
+            self.display_tree(current.child, level + 1)
+            current = current.right
+            if current is root: 
+                break  
+            
