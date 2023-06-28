@@ -32,11 +32,6 @@
 
 ''' 
 
-class KBH_Item: 
-    def __init__(self, key, value, data = None):
-        self.key = key
-        self.value = value 
-        self.data = data
 
 class KBH: 
     def __init__(self, type_ = "min"): 
