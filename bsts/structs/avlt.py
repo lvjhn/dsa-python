@@ -5,13 +5,12 @@
         * reference (slightly modified)
             https://www.programiz.com/dsa/avl-tree
 """ 
-from linked_lists.structs.sll import SLL 
-from linked_lists.structs.dll import DLL 
 
 class AVLT_Node(): 
-    def __init__(self, key, **kwargs):
+    def __init__(self, key, value):
         self.key = key 
-        self.values = SLL()
+        self.value = value
+
         self.height = 1
 
         self.parent = None 
@@ -53,173 +52,72 @@ class AVLT:
             return root 
         return self.find_max(root.right)
 
-    def left_rotate(self, a): 
-        al = None 
-        b = None 
-        bl = None 
-        br = None 
-        p = None 
+    def left_rotate(self, x): 
+        y = x.right
 
-        if a.left: 
-            al = a.left 
-        if a.right: 
-            b = a.right 
-        if b.left:
-            bl = b.left 
-        if b and b.right:
-            br = b.right 
-        if a.parent: 
-            p = a.parent 
+        x.right = y.left
 
-        b.left = a 
-        if a:
-            a.parent = b 
+        if y.left is not None:
+            y.left.parent = x
+
+        y.parent = x.parent
         
-        a.left = al
-        if al: 
-            al.parent = a 
+        if x.parent == None:
+            self.root = y
+        elif x == x.parent.left:
+            x.parent.left = y
+        else:
+            x.parent.right = y
 
-        a.right = bl  
-        if bl: 
-            bl.parent = a 
+        y.left = x
+        x.parent = y
 
+        x.height = \
+            1 + max(self.get_height(x.left), self.get_height(x.right))
+        y.height = \
+            1 + max(self.get_height(y.left), self.get_height(y.right))
 
-        if a is self.root: 
-            self.root = b
-            b.parent = None
-
-        if p: 
-            if p.left is a: 
-                p.left = b 
-            else: 
-                p.right = b 
-            b.parent = p
-        
-        a.height = 1 + max(self.get_height(al), self.get_height(bl)) 
-        b.height = 1 + max(self.get_height(a), self.get_height(br))
-
-        return b 
+        return y
 
     def right_rotate(self, a): 
-        ar = None 
-        b = None 
-        bl = None 
-        br = None 
-        p = None 
+        y = x.left
+        x.left = y.right
 
-        if a.right: 
-            ar = a.right  
-        if a.left: 
-            b = a.left 
-        if b.left: 
-            bl = b.left 
-        if b.right: 
-            br = b.right
-        if a.parent:
-            p = a.parent
+        if y.right is not None:
+            y.right.parent = x
 
-        b.right = a 
-        if a:
-            a.parent = b
+        y.parent = x.parent
+        if x.parent == None:
+            self.root = y
+        elif x == x.parent.right:
+            x.parent.right = y
+        else:
+            x.parent.left = y
 
-        a.left = br 
-        if br: 
-            br.parent = a 
+        y.right = x
+        x.parent = y
 
-        a.right = ar 
-        if ar: 
-            ar.parent = a
+        x.height = \
+            1 + max(self.get_height(x.left), self.get_height(x.right))
+        y.height = \
+            1 + max(self.get_height(y.left), self.get_height(y.right))
 
-        if a is self.root: 
-            self.root = b
-            b.parent = None 
-        if p:
-            if p.left is a: 
-                p.left = b 
-            else: 
-                p.right = b 
-            b.parent = p
-        
-        a.height = 1 + max(self.get_height(br), self.get_height(ar)) 
-        b.height = 1 + max(self.get_height(a), self.get_height(bl))
-
-        return b 
+        return y
 
     def left_right_rotate(self, A):
         B = A.left 
         self.left_rotate(B) 
-        rr = self.right_rotate(A) 
-        return rr
-    
+        return self.right_rotate(A)
+
     def right_left_rotate(self, A): 
         B = A.right 
         self.right_rotate(B) 
-        lr = self.left_rotate(A) 
-        return lr 
+        return self.left_rotate(A)
 
     def update_height(self, node): 
         node.height = 1 + max(self.get_height(node.left), 
                               self.get_height(node.right))
 
-    def insert(self, key, value): 
-        node = AVLT_Node(key) 
-        self.insert_node(node, value)
-
-    def insert_node(self, node, value): 
-        if self.root is None: 
-            self.root = node 
-            self.count = 1 
-        else: 
-            current = self.root 
-
-            while True: 
-                if node.key < current.key:
-                    if current.left is None:
-                        current.left = node 
-                        node.values.append(value)
-                        node.parent = current 
-                        break
-                    else: 
-                        current = current.left
-                 
-                elif node.key > current.key: 
-                    if current.right is None: 
-                        current.right = node 
-                        node.values.append(value)
-                        node.parent = current 
-                        break
-                    else:
-                        current = current.right
-
-                elif node.key == current.key:
-                    current.values.append(value)
-                    break
-
-            self.count += 1 
-            self.rebalance_insert(node, current)
-
-    def rebalance_insert(self, new_node, current): 
-        while current is not None: 
-            # update height 
-            self.update_height(current) 
-
-            # get balance factor 
-            bf = self.get_balance_factor(current) 
-
-            # apply rotation rules
-            if bf > 1:
-                if new_node.key < current.left.key: 
-                    current = self.right_rotate(current)
-                else: 
-                    current = self.left_right_rotate(current) 
-            if bf < -1:
-                if new_node.key > current.right.key: 
-                    current = self.left_rotate(current) 
-                else: 
-                    current = self.right_left_rotate(current)
-
-            # continue until root is reached
-            current = current.parent 
 
     def find(self, key, root = None): 
         if root == None: 
@@ -236,62 +134,90 @@ class AVLT:
                 return current 
         return None
 
-    def delete(self, key, root = None): 
-        current = self.find(key, root)
+    def insert(self, key, value): 
+        node = AVLT_Node(key, value) 
+        self.insert_node(self.root, node, None)
 
-        if current is None: 
-            raise Exception(f"{key} is not in tree.")
+    def insert_node(self, root, node, parent): 
+        # find the correct location and insert the node
+        if self.root is None: 
+            self.count += 1 
+            self.root = node
+            return node
+        elif not root:
+            self.count += 1
+            node.parent = parent
+            return node
+        elif node.key < root.key:
+            root.left = self.insert_node(root.left, node, root)
+        else:
+            root.right = self.insert_node(root.right, node, root)
 
-        self.delete_node(current, root)
+        root.height = 1 + max(self.get_height(root.left),
+                              self.get_height(root.right))
 
-    def delete_node(self, node, root = None):
-        if root == None: 
-            root = self.root
+        # update the balance factor and balance the tree
+        bf = self.get_balance_factor(root)
+        if bf > 1:
+            if node.key < root.left.key:
+                return self.right_rotate(root)
+            else:
+                return self.left_right_rotate(root)
 
-        temp = None 
+        if bf < -1:
+            if node.key > root.right.key:
+                return self.left_rotate(root)
+            else:
+                return self.right_left_rotate(root)
 
-        if node.left is None: 
-            temp = node.right 
-        elif node.right is None: 
-            temp = node.left 
-        else: 
-            temp = self.find_min(node.right) 
-            temp.left = node.left 
-            temp.right = self.delete(temp.key, node.right) 
+        return root
+
+
+    def delete(self, key): 
+        self.delete_node(self.root, key)
+
+    def delete_node(self, root, key):
+        # find the node to be deleted and remove it
+        if not root:
+            return root
+        elif key < root.key:
+            root.left = self.delete_node(root.left, key)
+        elif key > root.key:
+            root.right = self.delete_node(root.right, key)
+        else:
+            if root.left is None:
+                temp = root.right
+                root = None
+                return temp
+            elif root.right is None:
+                temp = root.left
+                root = None
+                return temp
+            temp = self.find_min(root.right)
+            root.key = temp.key
+            root.right = self.delete_node(root.right,temp.key)
         
-        if node is self.root: 
-            self.root = temp
-        else: 
-            parent = node.parent 
-            if parent.left is node: 
-                parent.left = temp 
-            else: 
-                parent.right = temp
+        if root is None:
+            return root
 
-        self.rebalance_delete(temp)
+        # update the balance factor of nodes
+        root.height = 1 + max(self.get_height(root.left),
+                              self.get_height(root.right))
 
-    def rebalance_delete(self, current):
-        while current is None:
-            # update height 
-            self.update_height(current) 
+        bf = self.get_balance_factor(root)
 
-            # get balance factor 
-            bf = self.get_balance_factor(current) 
-
-            # apply rotation rules
-            if bf > 1:
-                if self.get_balance_factor(current.left) >= 0:
-                    current = self.right_rotate(current)
-                else: 
-                    current = self.left_right_rotate(current) 
-            if bf < -1:
-                if self.get_balance_factor(current.right) <= 0: 
-                    current = self.left_rotate(current) 
-                else: 
-                    current = self.right_left_rotate(current)
-
-            # continue unless top is reached
-            current = current.parent 
+        # balance the tree
+        if bf > 1:
+            if self.get_balance_factor(root.left) >= 0:
+                return self.right_rotate(root)
+            else:
+                return self.left_right_rotate(root)
+        if bf < -1:
+            if self.get_balance_factor(root.right) <= 0:
+                return self.left_rotate(root)
+            else:
+                return self.right_left_rotate(root)
+        return root 
 
     def display(self): 
         self.display_node(self.root, 0, "root")
@@ -305,7 +231,7 @@ class AVLT:
             f"{orient} : {root.key} -> " +
             f"h: {self.get_height(root)}, " + 
             f"bf: {self.get_balance_factor(root)}, " + 
-            f"|v|: {len(root.values)}" 
+            f"v: {root.value}" 
         )
         
         self.display_node(root.left, indent + 1, "left")
