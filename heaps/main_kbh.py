@@ -1,79 +1,53 @@
 from .structs.kbh import KBH
 import random
 
-def main_a():
-    heap = KBH() 
+heap = KBH("min") 
 
-    arr = []
+# Custom Comparator Demo 
+def comparator(a, b): 
+    if heap.type == "min": 
+        if a.value == b.value: 
+            return a.key < b.key 
+        else: 
+            return a.value < b.value  
+    elif heap.type == "max": 
+        if a.value == b.value: 
+            return a.key > b.key 
+        else: 
+            return a.value < b.value  
 
-    for i in range(10, -1, -1): 
-        arr.append(i)
+heap.comparator = comparator
 
-    heap.heapify_up(arr)
+heap.insert("a", 10)
+heap.insert("b", 20)
+heap.insert("c", 30)
+heap.insert("d", 40)
+heap.insert("e", 50)
+heap.insert("f", 60)
+heap.insert("g", 60)
+heap.insert("h", 60)
+heap.insert("i", 70)
+heap.insert("j", 80)
 
-    print(list(heap.keys()))
-    print(list(heap.values()))
-    print(heap.key_map)
+heap.display()
 
-    print("Updating 4 to value -10")
-    heap.update(4, -10)
+# Update and Pop
 
-    print(list(heap.keys()))
-    print(list(heap.values()))
-    print(heap.key_map)
+heap.update("i", -100)
 
-def main_b(): 
-    heap = KBH() 
+print("heap.min()", heap.min())
 
-    arr = {
-        "a" : 1,
-        "b" : 2, 
-        "c" : 3, 
-        "d" : 4, 
-        "e" : 5, 
-        "f" : 6, 
-        "g" : 7, 
-        "h" : 8
-    }
+print("No. of items before popping:", heap.size)
+heap.pop()
+print("No. of items after popping:", heap.size)
 
-    heap.heapify_up(arr)
+print("heap.min():", heap.min())
 
-    print(list(heap.keys()))
-    print(list(heap.values()))
-    print(heap.key_map)
+heap.display()
 
-    print("Updating values...")
-    heap.update("f", 10)
-    heap.update("c", -20)
-
-    print("Inserting i with value 9")
-    heap.insert("i", 9)
-
-    heap.delete("d")
-
-    print(list(heap.keys()))
-    print(list(heap.values()))
-    print(heap.key_map)
-
-
-    print("--- Heap Sort Demo ---")
-
-    heap.display()
-
-    n = heap.size()
-    for i in range(n): 
-        print(heap.top().key, heap.top().value)
-        heap.pop()
-
-def main_c(): 
-    heap = KBH() 
-
-    N_ITEMS = 100_000
-
-    for i in range(N_ITEMS): 
-        heap.insert(i, i) 
+# Unload heap 
+while heap.size() > 0: 
+    top = heap.top() 
+    print(top.value, top.key) 
+    heap.pop()
     
-    for i in range(N_ITEMS): 
-        heap.pop()
-
-main_c()

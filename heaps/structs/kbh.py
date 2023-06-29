@@ -46,7 +46,7 @@ class KBH:
 
     def comparator(self, a, b): 
         if self.type == "min": 
-            return a.value < b.value
+            return a.value < b.value 
         elif self.type == "max":
             return a.value > b.value
         return None
@@ -260,3 +260,6 @@ class KBH:
         if self.type != "max": 
             raise Exception("Not a maximum heap.") 
         return self.top().value 
+
+    def size(self): 
+        return len(self.items)

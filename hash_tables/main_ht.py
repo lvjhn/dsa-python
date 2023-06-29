@@ -5,7 +5,7 @@ import  time
 
 mode = 2
 
-N_ITEMS = 100000
+N_ITEMS = 100
 
 pht = {}
 
@@ -26,21 +26,4 @@ for i in range(N_ITEMS):
     ht.insert_item(i, i)
     pht[i] = i
 
-# ht.display()
-
-for i in range(N_ITEMS, N_ITEMS + 10000):
-    ht.insert_item(i, i)
-    pht[i] = i
-
-a = time.time()
-for i in range(1000, 10000):
-    ht.search(i)
-b = time.time() 
-print(str(b - a).format("{.8f}"))
-
-a = time.time()
-for i in range(1000, 10000):
-    pht[i] = pht[i] 
-b = time.time() 
-print(str(b - a).format("{.8f}"))
-
+ht.display()

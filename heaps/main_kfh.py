@@ -2,39 +2,52 @@ from .structs.kfh import KFH
 import random 
 import time 
 
-heap = KFH("max") 
+heap = KFH("min") 
 
-# heap.insert("a", 10)
-# heap.insert("b", 20)
-# heap.insert("c", 30)
-# heap.insert("d", 40)
-# heap.insert("e", 50)
-# heap.insert("f", 60)
-# heap.insert("g", 70)
-# heap.insert("h", 80)
+# Custom Comprator Demo 
+def comparator(a, b): 
+    if heap.type == "min": 
+        if a.value == b.value: 
+            return a.key < b.key 
+        else: 
+            return a.value < b.value  
+    elif heap.type == "max": 
+        if a.value == b.value: 
+            return a.key > b.key 
+        else: 
+            return a.value > b.value  
 
-# heap.display()
+heap.comparator = comparator 
 
-# heap.update("f", 100)
+heap.insert("a", 10)
+heap.insert("b", 20)
+heap.insert("c", 30)
+heap.insert("d", 40)
+heap.insert("e", 50)
+heap.insert("f", 60)
+heap.insert("g", 60)
+heap.insert("h", 60)
+heap.insert("i", 70)
+heap.insert("j", 80)
 
-# print("heap.max()", heap.max())
+# Update and Pop 
+heap.display()
 
-# print("No. of items before popping:", heap.count)
-# heap.pop()
-# print("No. of items after popping:", heap.count)
+heap.update("e", -100)
 
-# print("heap.max():", heap.max())
+print("heap.min()", heap.min())
 
-# heap.display()
+print("No. of items before popping:", heap.count)
+heap.pop()
+print("No. of items after popping:", heap.count)
 
-N_ITEMS = 100_000
+print("heap.min():", heap.min())
 
-for i in range(N_ITEMS): 
-    heap.insert(i, i)
+heap.display()
 
-for i in range(N_ITEMS):
+# Unload heap 
+while heap.size() > 0: 
+    top = heap.top() 
+    print(top.value, top.key) 
     heap.pop()
-    # heap.update(i, random.uniform(0, 100))
-
-
-# heap.display() 
+    

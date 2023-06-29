@@ -242,3 +242,6 @@ class KFH:
         if self.type != "max": 
             raise Exception("Not a maximum heap.") 
         return self.top().value 
+
+    def size(self): 
+        return self.count
