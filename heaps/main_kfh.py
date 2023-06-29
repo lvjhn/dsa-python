@@ -27,17 +27,14 @@ heap = KFH("max")
 
 # heap.display()
 
-N_ITEMS = 100000
+N_ITEMS = 100_000
 
 for i in range(N_ITEMS): 
     heap.insert(i, i)
 
-a = time.time() 
 for i in range(N_ITEMS):
     heap.pop()
     # heap.update(i, random.uniform(0, 100))
-b = time.time() 
 
-print("Time:", b - a)
 
 # heap.display() 

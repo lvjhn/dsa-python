@@ -68,10 +68,10 @@ def main_b():
 def main_c(): 
     heap = KBH() 
 
-    N_ITEMS = 1_000_000
+    N_ITEMS = 100_000
 
     for i in range(N_ITEMS): 
-        heap.insert(i, random.uniform(0, 100)) 
+        heap.insert(i, i) 
     
     for i in range(N_ITEMS): 
         heap.pop()

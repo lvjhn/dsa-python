@@ -2,7 +2,7 @@
     KEYED BINARY-HEAP IMPLEMENTATION (PYTHON)
     (Modified Binary Heap with Custom Keys)
 
-   * implements common operations
+    * implements common operations
         - comparator(a, b) 
         - bubble_up(arr, i)
         - bubble_down(arr, i)
