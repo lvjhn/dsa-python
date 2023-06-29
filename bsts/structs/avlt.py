@@ -43,12 +43,9 @@ class AVLT:
         return self.find_min(root.left)
 
     def find_max(self, root): 
-        print(f"root: {root.key}")
         if root.left is None and root.right is None: 
-            print("c1")
             return root 
         elif root.left is not None and root.right is None: 
-            print("c2")
             return root 
         return self.find_max(root.right)
 
@@ -137,15 +134,14 @@ class AVLT:
     def insert(self, key, value): 
         node = AVLT_Node(key, value) 
         self.insert_node(self.root, node, None)
+        self.count += 1
 
     def insert_node(self, root, node, parent): 
         # find the correct location and insert the node
         if self.root is None: 
-            self.count += 1 
             self.root = node
             return node
         elif not root:
-            self.count += 1
             node.parent = parent
             return node
         elif node.key < root.key:
@@ -175,6 +171,7 @@ class AVLT:
 
     def delete(self, key): 
         self.delete_node(self.root, key)
+        self.count -= 1
 
     def delete_node(self, root, key):
         # find the node to be deleted and remove it
@@ -189,13 +186,24 @@ class AVLT:
                 temp = root.right
                 root = None
                 return temp
+            
             elif root.right is None:
                 temp = root.left
                 root = None
                 return temp
-            temp = self.find_min(root.right)
-            root.key = temp.key
-            root.right = self.delete_node(root.right,temp.key)
+           
+            else:
+                temp = self.find_min(root.right)
+                temp.left = root.left
+                temp.right = self.delete_node(root.right,temp.key)
+
+            if root is self.root: 
+                self.root = temp
+            else: 
+                if root.parent.left is root: 
+                    root.parent.left = temp 
+                else: 
+                    root.parent.right = temp
         
         if root is None:
             return root
