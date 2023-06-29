@@ -16,7 +16,7 @@ class AVLT_Node():
         self.parent = None 
         self.left = None 
         self.right = None 
-    
+
 class AVLT: 
     def __init__(self): 
         self.count = 0 
@@ -36,17 +36,25 @@ class AVLT:
         return self.get_height(root.left) - self.get_height(root.right) 
 
     def find_min(self, root): 
+        if root is None: 
+            return None 
+
         if root.left is None and root.right is None: 
             return root 
         elif root.left is None and root.right is not None: 
             return root 
+
         return self.find_min(root.left)
 
     def find_max(self, root): 
+        if root is None: 
+            return None 
+
         if root.left is None and root.right is None: 
             return root 
         elif root.left is not None and root.right is None: 
             return root 
+
         return self.find_max(root.right)
 
     def left_rotate(self, x): 
@@ -117,7 +125,10 @@ class AVLT:
 
 
     def find(self, key, root = None): 
-        if root == None: 
+        if self.root is None: 
+            return None 
+            
+        if root is None: 
             current = self.root 
         else: 
             current = root 
@@ -135,6 +146,7 @@ class AVLT:
         node = AVLT_Node(key, value) 
         self.insert_node(self.root, node, None)
         self.count += 1
+        return node
 
     def insert_node(self, root, node, parent): 
         # find the correct location and insert the node
@@ -168,9 +180,8 @@ class AVLT:
 
         return root
 
-
     def delete(self, key): 
-        self.delete_node(self.root, key)
+        self.delete_key(self.root, key)
         self.count -= 1
 
     def delete_node(self, root, key):

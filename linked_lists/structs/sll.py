@@ -59,6 +59,12 @@ class SLL:
         self.tail = None 
         self.size = 0 
 
+    def __repr__(self): 
+        text = "" 
+        for item in self.iterate():
+            text += f"({item.value}) "
+        return text
+
     # --- LOCATION OPERATIONS --- #
     
     def at(self, index): 

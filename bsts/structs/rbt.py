@@ -19,7 +19,7 @@ class RBT_Node():
         
         self.color = 1
 
-
+    
 class RBT():
     def __init__(self):
         self.TNULL = RBT_Node(None, None)
@@ -33,18 +33,44 @@ class RBT():
         return self.count 
 
     def find_min(self, root): 
+        if root is self.TNULL: 
+            return None 
+
         if root.left is self.TNULL and root.right is self.TNULL: 
             return root 
         elif root.left is self.TNULL and root.right is not self.TNULL: 
             return root 
+
         return self.find_min(root.left)
 
     def find_max(self, root): 
+        if root is self.TNULL: 
+            return None 
+
         if root.left is self.TNULL and root.right is self.TNULL: 
             return root 
         elif root.left is not self.TNULL and root.right is self.TNULL: 
             return root 
+
         return self.find_max(root.right)
+
+
+    def find(self, key, root = None): 
+            
+        if root is None: 
+            current = self.root 
+        else: 
+            current = root 
+
+        while current is not self.TNULL: 
+            if key < current.key:
+                current = current.left
+            elif key > current.key: 
+                current = current.right
+            else: 
+                return current 
+                
+        return None
 
     def transplant(self, u, v):
         if u.parent == None:
@@ -55,7 +81,7 @@ class RBT():
             u.parent.right = v
         v.parent = u.parent
 
-    
+
     def left_rotate(self, x):
         y = x.right
         x.right = y.left
@@ -72,6 +98,8 @@ class RBT():
         y.left = x
         x.parent = y
 
+        return y
+
     def right_rotate(self, x):
         y = x.left
         x.left = y.right
@@ -87,6 +115,8 @@ class RBT():
             x.parent.left = y
         y.right = x
         x.parent = y
+
+        return y
 
     def insert(self, key, value):
         node = RBT_Node(key, value)
@@ -117,12 +147,14 @@ class RBT():
 
         if node.parent == None:
             node.color = 0
-            return
+            return node
 
         if node.parent.parent == None:
-            return
+            return node
 
         self.rebalance_insert(node)
+
+        return node
         
 
     def rebalance_insert(self, k):
@@ -161,10 +193,10 @@ class RBT():
         self.root.color = 0
 
     def delete(self, key): 
-        self.delete_node(self.root, key)
+        self.delete_key(self.root, key)
         self.count -= 1
 
-    def delete_node(self, node, key):
+    def delete_key(self, node, key):
         z = self.TNULL
 
         while node is not self.TNULL:
@@ -180,6 +212,9 @@ class RBT():
             print(f"{key} is not in the tree")
             return
 
+        return self.delete_node(z)
+
+    def delete_node(self, z): 
         y = z
         y_original_color = y.color
 

@@ -1,4 +1,4 @@
-from .structs.deque import Deque 
+from .structs.priority_queue import PriorityQyeye 
 
 queue = Deque() 
 
