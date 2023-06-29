@@ -317,6 +317,10 @@ class CDLL:
     # --- TRAVERSAL OPERATIONS --- # 
     def iterate(self):
         current = self.head 
+
+        if current == None: 
+            return None
+
         while True: 
             yield current 
             current = current.next

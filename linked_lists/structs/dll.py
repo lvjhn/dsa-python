@@ -302,6 +302,10 @@ class DLL:
     # --- TRAVERSAL OPERATIONS --- # 
     def iterate(self): 
         current = self.head 
+        
+        if current == None: 
+            return
+
         while current is not None:
             yield current 
             current = current.next

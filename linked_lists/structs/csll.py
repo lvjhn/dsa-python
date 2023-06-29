@@ -305,6 +305,10 @@ class CSLL:
     # --- TRAVERSAL OPERATIONS --- # 
     def iterate(self):
         current = self.head 
+
+        if current == None: 
+            return
+
         while True: 
             yield current 
             current = current.next

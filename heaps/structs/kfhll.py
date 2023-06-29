@@ -1,11 +1,10 @@
 ''' 
-    KEYED FIBONACCI-HEAP IMPLEMENTATION (PYTHON)
-    (Modified Fibonacci-Heap with Custom Keys)
+    KEYED FIBONACCI-HEAP (LINKED-LIST) IMPLEMENTATION (PYTHON)
+    (Modified Fibonacci-Heap Linked-List with Custom Keys)
 
     Notes: 
 		* isolated
-			- does not depend on third-party packages or other files 
-			- can be used as is
+			- depends on 1 other implementation: CDLL
         
         * printable / narrow width
 
@@ -36,31 +35,40 @@
             - min() 
             - max() 
 ''' 
+from linked_lists.structs.cdll import CDLL 
 import math 
 
-class KFH_Item: 
+class KFHLL_Item: 
     def __init__(self, key, value, data = None): 
         self.key = key 
         self.value = value 
         self.data = data
         self.order = 0
         self.mark = False
-        self.children = []
+        self.children = CDLL()
         self.parent = None
+        self.list_item = None
+     
+    def add_child(self, node): 
+        node.parent = self 
+        self.children.append(node)
+        node.list_item = self.children.tail
+        self.order += 1 
 
-    def add_at_end(self, tree): 
-        self.children.append(tree)
-        self.order = self.order + 1 
-
-class KFH: 
+class KFHLL: 
     def __init__(self, type_ = "min"): 
-        self.children = [] 
+        self.children = CDLL()
         self.min_node = None 
         self.count = 0 
         self.type = type_
         self.key_no = 0 
         self.key_map = {} 
     
+    def add_tree(self, tree): 
+        tree.parent = None 
+        self.children.append(tree)
+        tree.list_item = self.children.tail
+
     def comparator(self, a, b): 
         if self.type == "min": 
             return a.value < b.value
@@ -74,12 +82,13 @@ class KFH:
         self.key_map[arr[j].key] = i
 
     def insert(self, key, value, data = None):
-        node = KFH_Item(key, value, data)
+        node = KFHLL_Item(key, value, data)
         self.insert_node(node)  
 
     def insert_node(self, node):
-        self.children.append(node)
+        self.add_tree(node)
         self.key_map[node.key] = node 
+
         if self.min_node is None or self.comparator(node, self.min_node): 
             self.min_node = node 
 
@@ -90,30 +99,34 @@ class KFH:
         del self.key_map[smallest.key]
 
         if smallest is not None: 
-            for child in smallest.children: 
-                self.children.append(child) 
-            self.children.remove(smallest) 
-            if self.children == []:
+            for child in smallest.children.iterate(): 
+                if child == None:
+                    break
+                self.add_tree(child.value) 
+            self.children.delete_node(smallest.list_item) 
+
+            if self.children.size == 0:
                 self.min_node = None 
             else: 
-                self.min_node = self.children[0]
+                self.min_node = self.children.head
                 self.consolidate() 
-            self.count -= 1
+
+            self.count -= 1 
             return smallest.key 
         return None 
 
     def consolidate(self): 
         aux = math.floor(math.log2(self.count) + 1) * [None] 
 
-        while self.children != []: 
-            x = self.children[0] 
+        while self.children.size > 0:
+            x = self.children.head.value
             order = x.order 
-            self.children.remove(x) 
+            self.children.delete_head()
             while aux[order] is not None: 
                 y = aux[order] 
                 if not self.comparator(x, y): 
                     x, y = y, x 
-                x.add_at_end(y) 
+                x.add_child(y) 
                 y.parent = x
                 aux[order] = None 
                 order += 1  
@@ -123,7 +136,7 @@ class KFH:
 
         for k in aux: 
             if k is not None: 
-                self.children.append(k) 
+                self.add_tree(k)
                 if self.min_node is None or self.comparator(k, self.min_node): 
                     self.min_node = k 
 
@@ -132,7 +145,7 @@ class KFH:
             raise Exception(f"{key} is not in list.")
         item = self.key_map[key] 
         
-        aux = KFH_Item(key, new_value, None)
+        aux = KFHLL_Item(key, new_value, None)
         item = self.key_map[key]
 
         if self.comparator(aux, item): 
@@ -171,9 +184,9 @@ class KFH:
         self.pop()   
 
     def cut(self, x, y): 
-        y.children.remove(x) 
+        y.children.delete_node(x.list_item) 
         y.order -= 1
-        self.children.append(x)
+        self.add_tree(x)
         x.parent = None 
         x.mark = False
 
@@ -229,9 +242,11 @@ class KFH:
         if root is None: 
             return 
 
-        for current in root.children: 
-            print(f"{'    ' * level} {current.key} -> {current.value} {current.order}")
-            self.display_tree(current, level + 1)  
+        for current in root.children.iterate(): 
+            if current == None: 
+                return 
+            print(f"{'    ' * level} {current.value.key} -> {current.value.value} {current.value.order}")
+            self.display_tree(current.value, level + 1)  
 
     def min(self): 
         if self.type != "min":

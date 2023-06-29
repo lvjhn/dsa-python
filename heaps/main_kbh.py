@@ -1,4 +1,5 @@
 from .structs.kbh import KBH
+import random
 
 def main_a():
     heap = KBH() 
@@ -67,10 +68,12 @@ def main_b():
 def main_c(): 
     heap = KBH() 
 
-    for i in range(20000): 
-        heap.insert(i, i) 
+    N_ITEMS = 1_000_000
+
+    for i in range(N_ITEMS): 
+        heap.insert(i, random.uniform(0, 100)) 
     
-    for i in range(20000): 
+    for i in range(N_ITEMS): 
         heap.pop()
 
 main_c()

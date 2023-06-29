@@ -1,8 +1,8 @@
-from .structs.kfh import KFH
+from .structs.kfhll import KFHLL
 import random 
 import time 
 
-heap = KFH("max") 
+heap = KFHLL("max") 
 
 # heap.insert("a", 10)
 # heap.insert("b", 20)
@@ -13,15 +13,16 @@ heap = KFH("max")
 # heap.insert("g", 70)
 # heap.insert("h", 80)
 
-# heap.display()
+# heap.update("f", -100)
 
-# heap.update("f", 100)
+# heap.display()
 
 # print("heap.max()", heap.max())
 
 # print("No. of items before popping:", heap.count)
 # heap.pop()
 # print("No. of items after popping:", heap.count)
+
 
 # print("heap.max():", heap.max())
 

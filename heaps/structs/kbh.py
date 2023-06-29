@@ -3,32 +3,32 @@
     (Modified Binary Heap with Custom Keys)
 
    * implements common operations
-            - comparator(a, b) 
-            - bubble_up(arr, i)
-            - bubble_down(arr, i)
-            - keyfy(items) 
-            - swap_key_map(i, j)
-            - heapify_up(items, keyfy) 
-            - heapify_down(items, keyfy) 
-            - insert(key, value, data)
-            - insert_node(node)
-            - delete() 
-            - update(key, new_value)
-            - update_a(key, value)
-            - update_b(key, value)  
-            - keys()
-            - values()
-            - top()
-            - size()
-            - get_data(key)
-            - set_data(key, data) 
-            - get_value(key) 
-            - set_value(key, value)
-            - get_item(key) 
-            - set_item(key, data) 
-            - display()
-            - min() 
-            - max() 
+        - comparator(a, b) 
+        - bubble_up(arr, i)
+        - bubble_down(arr, i)
+        - keyfy(items) 
+        - swap_key_map(i, j)
+        - heapify_up(items, keyfy) 
+        - heapify_down(items, keyfy) 
+        - insert(key, value, data)
+        - insert_node(node)
+        - delete() 
+        - update(key, new_value)
+        - update_a(key, value)
+        - update_b(key, value)  
+        - keys()
+        - values()
+        - top()
+        - size()
+        - get_data(key)
+        - set_data(key, data) 
+        - get_value(key) 
+        - set_value(key, value)
+        - get_item(key) 
+        - set_item(key, data) 
+        - display()
+        - min() 
+        - max() 
 
 ''' 
 class KBH_Item: 
@@ -157,7 +157,7 @@ class KBH:
         arr[0] = arr[l]
 
         # delete previous min and end of array
-        del self.key_map[arr[0].key]
+        # del self.key_map[arr[0].key]
 
         # update key map of end of array
         self.key_map[arr[l].key] = 0
