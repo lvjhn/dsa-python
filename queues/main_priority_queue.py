@@ -1,20 +1,17 @@
 from .structs.priority_queue import PriorityQueue
 
-queue = PriorityQueue("max") 
+queue = PriorityQueue() 
 
-N = 100
-G = 10 
-
-k = 0
-for i in range(N//G):
-    for j in range(G): 
-        queue.enqueue(k, i, (i + 1) + (j + 1))
-        k += 1
-
-queue.items.display()
-print(queue.items.max_key)
+queue.enqueue("a", 5, None)
+queue.enqueue("b", 5, None)
+queue.enqueue("c", 10, None)
+queue.enqueue("d", 10, None)
 
 while queue.length() > 0: 
-    print(queue.front())
+    print(
+        f"{queue.front().key} -> {queue.front().value} : " +
+        f"{queue.front().data}"
+    )
     queue.dequeue_front() 
+
 

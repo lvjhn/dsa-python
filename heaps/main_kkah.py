@@ -1,22 +1,22 @@
-from .structs.kbh import KBH
+from .structs.kkah import KKAH 
 
 def main_a():
-    heap = KBH("min") 
+    heap = KKAH("min") 
 
-    # # Custom Comparator Demo 
-    # def comparator(a, b): 
-    #     if heap.type == "min": 
-    #         if a.value == b.value: 
-    #             return a.key < b.key 
-    #         else: 
-    #             return a.value < b.value  
-    #     elif heap.type == "max": 
-    #         if a.value == b.value: 
-    #             return a.key > b.key 
-    #         else: 
-    #             return a.value < b.value  
+    # Custom Comparator Demo 
+    def comparator(a, b): 
+        if heap.type == "min": 
+            if a.value == b.value: 
+                return a.key < b.key 
+            else: 
+                return a.value < b.value  
+        elif heap.type == "max": 
+            if a.value == b.value: 
+                return a.key > b.key 
+            else: 
+                return a.value < b.value  
 
-    # heap.comparator = comparator
+    heap.comparator = comparator
 
     heap.insert("a", 10)
     heap.insert("b", 20)
@@ -35,15 +35,13 @@ def main_a():
 
     heap.update("i", -100)
 
-    heap.display()
-
-    print("heap.top()", heap.top().value)
+    print("heap.min()", heap.min())
 
     print("No. of items before popping:", heap.size)
     heap.pop()
     print("No. of items after popping:", heap.size)
 
-    print("heap.top():", heap.top().value)
+    print("heap.min():", heap.min())
 
     heap.display()
 
@@ -54,7 +52,7 @@ def main_a():
         heap.pop()
         
 def main_b():
-    heap = KBH("min") 
+    heap = KKAH("min") 
     N_ITEMS = 100_000
 
     for i in range(N_ITEMS): 

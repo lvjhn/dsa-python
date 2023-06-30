@@ -18,7 +18,6 @@ class RBT_Node():
         self.right = None
         
         self.color = 1
-
     
 class RBT():
     def __init__(self):

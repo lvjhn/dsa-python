@@ -1,58 +1,28 @@
-''' 
-    KEYED BINARY-HEAP IMPLEMENTATION (PYTHON)
-    (Modified Binary Heap with Custom Keys)
+""" 
+    KEYED D-ARY/K-ARY HEAP IMPLEMENTATION (PYTHON)
+""" 
 
-    * implements common operations
-        - comparator(a, b) 
-        - bubble_up(arr, i)
-        - bubble_down(arr, i)
-        - keyfy(items) 
-        - swap_key_map(i, j)
-        - heapify_up(items, keyfy) 
-        - heapify_down(items, keyfy) 
-        - insert(key, value, data)
-        - insert_node(node)
-        - delete() 
-        - update(key, new_value)
-        - update_a(key, value)
-        - update_b(key, value)  
-        - keys()
-        - values()
-        - top()
-        - size()
-        - get_data(key)
-        - set_data(key, data) 
-        - get_value(key) 
-        - set_value(key, value)
-        - get_item(key) 
-        - set_item(key, data) 
-        - display()
-        - min() 
-        - max() 
-
-''' 
-
-
-class KBH_Item: 
-    def __init__(self, key, value, data = None):
+class KKAH_Item: 
+    def __init__(self, key, value, data): 
         self.key = key 
         self.value = value 
-        self.data = data
+        self.data = data 
+  
 
-class KBH: 
-    def __init__(self, type_ = "min"): 
+class KKAH: 
+    def __init__(self, degree = 3, type_ = "min"): 
         self.items = [] 
+        self.key_map = {}  
+        self.degree = 3 
         self.type = type_
-        self.key_no = 0  
-        self.key_map = {}
 
+    
     def comparator(self, a, b): 
         if self.type == "min": 
             return a.value < b.value 
-        elif self.type == "max":
-            return a.value > b.value
-        return None
-
+        elif self.type == "max": 
+            return a.value > b.value 
+    
     def keyfy(self, items): 
         if type(items) is list: 
             for i in range(len(items)): 
@@ -75,73 +45,86 @@ class KBH:
         arr = self.items
         self.key_map[arr[i].key] = j
         self.key_map[arr[j].key] = i
+    
+    def parent(self, i): 
+        d = self.degree 
+        return (i - 1) // d
 
-    def bubble_down(self, arr, i):
-        n = len(arr)
+    def child(self, i, j): 
+        if j >= self.degree:
+            error = f"Out of bounds for {j} when accessing children."
+            raise Exception(error)
+        return 2 * i + j 
+
+    def bubble_down(self, arr, i): 
+        n = len(arr) 
+        d = self.degree
 
         while 2 * i + 1 < n: 
-            l = 2 * i + 1 
-            r = 2 * i + 2
-            m = i
-
-            if l < n and self.comparator(arr[l], arr[m]): 
-                m = l 
-            if r < n and self.comparator(arr[r], arr[m]):                 
-                m = r
-            
+            m = i 
+            for j in range(d): 
+                c = self.child(i, j) 
+                if c < n and self.comparator(arr[c], arr[m]): 
+                    m = c 
             if m == i: 
-                break
+                break  
             else: 
-                self.swap_key_map(m, i)
-                arr[m], arr[i] = arr[i], arr[m]
-                i = m
+                self.swap_key_map(m, i) 
+                arr[m], arr[i] = arr[i], arr[m] 
+                i = m 
 
-        return arr  
+        return arr 
 
-    def bubble_up(self, arr, i):  
-        while i > 0:
-            p = (i - 1) // 2
-            if self.comparator(arr[i], arr[p]): 
+    def bubble_up(self, arr, i): 
+        d = self.degree 
+        while i > 0: 
+            p = self.parent(i)
+            if self.comparator(arr[i], arr[p]):
                 self.swap_key_map(p, i)
-                arr[p], arr[i] = arr[i], arr[p]
-                i = p
-            else:
-                break   
-        return arr
-
+                arr[p], arr[i] = arr[i], arr[p] 
+                i = p 
+            else: 
+                break 
+        return arr 
 
     def heapify_up(self, arr, keyfy = True): 
-        self.items = arr
+        self.items = arr 
+        
         if keyfy: 
-            arr = self.keyfy(self.items)
-            self.items = arr
-        n = len(arr)
+            arr = self.keyfy(self.items) 
+            self.items = arr 
+        
+        n = len(arr) 
 
         for i in range(n): 
             j = i 
-            self.bubble_up(arr, j)
-    
-    def heapify_down(self, arr, keyfy = True):
-        self.items = arr
-        if keyfy:
-            arr = self.keyfy(self.items)
-            self.items = arr
-        n = len(arr)
+            self.bubble_up(arr, j) 
 
-        for i in range(n // 2 - 1, -1, -1): 
-            j = i 
-            self.bubble_down(arr, j)
-    
-    def insert(self, key, value, data = None): 
-        item = KBH_Item(key, value, data)
+    def heapify_down(self, arr, keyfy = True): 
+        self.items = arr 
         
-        arr = self.items
+        if keyfy: 
+            arr = self.keyfy(self.items) 
+            self.items = arr 
+    
+        n = len(arr)
+        d = self.degree
+
+        for i in range(n // d - 1, -1, -1): 
+            j = i 
+            self.bubble_down(key, value, data)   
+
+    def insert(self, key, value, data = None): 
+        item = KKAH_Item(key, value, data)
+
+        arr = self.items 
         arr.append(item)
         i = len(arr) - 1 
-        self.key_map[key] = i  
+        self.key_map[key] = i 
+
         self.bubble_up(arr, i)
 
-    def pop(self):
+    def pop(self): 
         if len(self.items) == 1: 
             self.items = [] 
             return 
@@ -158,8 +141,10 @@ class KBH:
         arr.pop(l)
         n = len(arr)
 
-        self.bubble_down(arr, 0)
+        self.bubble_down(arr, 0) 
 
+        return item 
+    
     def delete(self, key):
         rem_val = float('-inf') if self.type == "min" else float("inf")
         self.update(key, rem_val) 
@@ -171,15 +156,14 @@ class KBH:
             raise Exception(f"{key} is not in list.")
         i = self.key_map[key] 
 
-        aux = KBH_Item(key, new_value, None)
+        aux = KKAH_Item(key, new_value, None)
         item = arr[i] 
     
-  
         if self.comparator(aux, item):
             self.update_a(key, new_value)
         else:   
             self.update_b(key, new_value)
-     
+
     def update_a(self, key, value): 
         arr = self.items 
         i = self.key_map[key] 

@@ -2,55 +2,53 @@
     DOUBLE-ENDED PRIORITY QUEUE IMPLEMENTATION 
     (Uses BSTH) 
 """ 
-from heaps.structs.bsth import BSTH
+from heaps.structs.kmmh import KMMH
 
 class PriorityQueue: 
     def __init__(self, type_ = "min"): 
-        self.items = BSTH()  
+        self.items = KMMH()  
         self.type = type_
 
+        def comparator(a, b): 
+            return self.comparator(a, b)
+
+        self.items.comparator = comparator
+
+    def comparator(self, a, b): 
+        if a.value == b.value: 
+            return a.key < b.key 
+        else: 
+            return a.value < b.value
+
     def min(self):
-        min_node = self.items.min_node()
-        return (
-            min_node.key,  
-            self.items.key_data[self.items.min_key][0],
-            self.items.key_data[self.items.min_key][1]
-        )
+        return self.items.min()
     
     def max(self):
-        max_node = self.items.max_node()
-        return (
-            max_node.key,  
-            self.items.key_data[self.items.max_key][0],
-            self.items.key_data[self.items.max_key][1],
-        )
+        return self.items.max() 
 
     def front(self): 
-        if self.type == "min":
+        if self.type == "min": 
             return self.min()
         elif self.type == "max": 
             return self.max()
 
     def back(self): 
         if self.type == "min": 
-            return self.max()
+            return self.type.max()
         elif self.type == "max": 
-            return self.min()
+            return self.type.min()
 
     def enqueue(self, key, priority, data = None): 
-        self.items.insert(key, priority, data) 
+        return self.items.insert(key, priority, data)
 
     def dequeue_front(self):
-        if self.type == "min":
-            return self.items.pop_min()
-        elif self.type == "max": 
-            return self.items.pop_max()
+        return self.items.pop_min()
 
     def dequeue_back(self): 
-        if self.type == "min":
-            return self.items.pop_max()
-        elif self.type == "max": 
-            return self.items.pop_min()  
+        return self.items.pop_max()
 
     def length(self): 
         return self.items.size()
+
+    def display(self): 
+        return self.items.display()
