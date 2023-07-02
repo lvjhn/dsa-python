@@ -1,23 +1,21 @@
-'''
-    DOUBLY LINKED-LIST IMPLEMENTATION (PYTHON)
+"""
+    ##############################################
+    # DOUBLY LINKED-LIST IMPLEMENTATION [PYTHON] #
+    ##############################################
 
-    Notes: 
-		* isolated
-			- does not depend on third-party packages or other files 
-			- can be used as is
-        
+    NOTES
+		* does not require other files 
         * printable / narrow width
 
-		* implements common operations 
-			
-            Location Operations
-            - at(index)
+	API		
+        Location Operations
+            - at(index) 
             - search(value) 
             - search_node(node) 
             - index(value)
             - node_index(node) 
-            
-            Insertion Operations
+        
+        Insertion Operations
             - insert(pos, value) 
             - insert_node(pos, node) 
             - prepend(value) 
@@ -28,25 +26,28 @@
             - insert_node_after(node, new_node) 
             - insert_before(node, value) 
             - insert_node_before(node, new_node) 
-            
-            Deletion Operations 
-            - delete(value) 
+                
+        Deletion Operations 
+            - delete(pos) 
             - delete_node(node)
             - delete_head() 
             - delete_tail() 
             - delete_after(node) 
             - delete_before(node)
+            - remove(value) 
 
-            Utility Functions 
+        Utility Functions 
             - predecessor(node) 
             - successor(node)
+            - prepredecessor(node)
+            - postsucessor(node)
 
-            Traversal Operations 
+        Traversal Operations 
+            - iterate()
             - traverse(cb) 
             - traverse_backwards(cb) 
             - traverse_range(i, j, cb)
-
-''' 
+"""
 
 class DLL_Node: 
     def __init__(self, value): 
@@ -63,6 +64,9 @@ class DLL:
     # --- LOCATION OPERATIONS --- #
     
     def at(self, index): 
+        """ 
+            Returns node at a given index. 
+        """
         i = 0 
         index = index % self.size 
         current = self.head 
@@ -72,6 +76,9 @@ class DLL:
         return current     
     
     def search(self, value): 
+        """ 
+            Searches for node with a given value. 
+        """ 
         current = self.head 
         while current is not None: 
             if current.value == value: 
@@ -80,6 +87,9 @@ class DLL:
         return None 
     
     def search_node(self, node):
+        """ 
+            Explicitly searches for a node. 
+        """ 
         current = self.head 
         while current is not None: 
             if current is node: 
@@ -232,6 +242,7 @@ class DLL:
                     f"when deleting index {node.value}"
             raise Exception(error)
 
+
     def delete_node(self, node): 
         if node is self.head: 
             self.delete_head() 
@@ -285,6 +296,10 @@ class DLL:
             prepredecessor = self.prepredecessor(node) 
             prepredecessor.next = node   
             node.prev = prepredecessor
+
+    def remove(self, value): 
+        node = self.search(value)
+        self.delete_node(node)
 
     # --- UTILITY FUNCTIONS --- # 
     def predecessor(self, node):

@@ -1,25 +1,26 @@
-'''
-	STACK IMPLEMENTATION (PYTHON) 
+"""
+	#################################
+	# STACK IMPLEMENTATION [PYTHON] #
+	#################################
 	
-	Notes: 
-		* isolated
-			- does not depend on third-party packages or other files 
-			- can be used as is
-		
+	NOTES 
+		* array based 
+		* does not require other files
 		* printable / narrow width
 
-		* implements common operations 
-			- push(value)
+	API 
+		Stack 
+			- size()
 			- top() 
+			- push(value) 
 			- pop()
-			- size() 
 
-''' 
+"""
 
 class Stack: 
 	def __init__(self): 
 		self.items = [] 
-	
+
 	def size(self):
 		return len(self.items) 
 	

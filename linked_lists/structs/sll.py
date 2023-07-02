@@ -1,23 +1,21 @@
-'''
-    SINGLY LINKED-LIST IMPLEMENTATION (PYTHON)
+"""
+    ##############################################
+    # SINGLY LINKED-LIST IMPLEMENTATION [PYTHON] #
+    ##############################################
 
-    Notes: 
-		* isolated
-			- does not depend on third-party packages or other files 
-			- can be used as is
-        
+    NOTES
+		* does not require other files 
         * printable / narrow width
 
-		* implements common operations 
-			
-            Location Operations
-            - at(index)
+	API		
+        Location Operations
+            - at(index) 
             - search(value) 
             - search_node(node) 
             - index(value)
             - node_index(node) 
-            
-            Insertion Operations
+        
+        Insertion Operations
             - insert(pos, value) 
             - insert_node(pos, node) 
             - prepend(value) 
@@ -28,25 +26,28 @@
             - insert_node_after(node, new_node) 
             - insert_before(node, value) 
             - insert_node_before(node, new_node) 
-            
-            Deletion Operations 
+                
+        Deletion Operations 
             - delete(pos) 
             - delete_node(node)
             - delete_head() 
             - delete_tail() 
             - delete_after(node) 
             - delete_before(node)
+            - remove(value) 
 
-            Utility Functions 
+        Utility Functions 
             - predecessor(node) 
             - successor(node)
+            - prepredecessor(node)
+            - postsucessor(node)
 
-            Traversal Operations 
+        Traversal Operations 
+            - iterate()
             - traverse(cb) 
             - traverse_backwards(cb) 
             - traverse_range(i, j, cb)
-
-''' 
+"""
 
 class SLL_Node: 
     def __init__(self, value): 
@@ -58,12 +59,6 @@ class SLL:
         self.head = None 
         self.tail = None 
         self.size = 0 
-
-    def __repr__(self): 
-        text = "" 
-        for item in self.iterate():
-            text += f"({item.value}) "
-        return text
 
     # --- LOCATION OPERATIONS --- #
     
@@ -220,13 +215,15 @@ class SLL:
                     f"when deleting index {node.value}"
             raise Exception(error)
 
-    def delete_node(self, node): 
+    def delete_node(self, node, predecessor = None): 
         if node is self.head: 
             self.delete_head() 
         elif node is self.tail: 
             self.delete_tail() 
         else: 
-            predecessor = self.predecessor(node) 
+            if predecessor is None:
+                predecessor = self.predecessor(node) 
+
             predecessor.next = predecessor.next.next 
 
             # decrease size of list
@@ -262,13 +259,26 @@ class SLL:
         else: 
             node.next = node.next.next   
 
-
     def delete_before(self, node): 
         if node is self.head:  
             raise Exception("Out of bounds when deleting node.") 
         else: 
             prepredecessor = self.prepredecessor(node) 
             prepredecessor.next = node   
+
+    def remove(self, value): 
+        node = self.head 
+        pred = None 
+        while node is not None: 
+            if node.value == value: 
+                if node is self.head: 
+                    self.delete_head() 
+                elif node is self.tail: 
+                    self.delete_tail() 
+                else: 
+                    self.delete_node(node, pred)
+            
+            node = node.next 
 
     # --- UTILITY FUNCTIONS --- # 
     def predecessor(self, node):

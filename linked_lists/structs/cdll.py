@@ -1,23 +1,21 @@
-'''
-    DOUBLY LINKED-LIST IMPLEMENTATION (PYTHON)
+"""
+    #######################################################
+    # CIRCULAR DOUBLY LINKED-LIST IMPLEMENTATION [PYTHON] #
+    #######################################################
 
-    Notes: 
-		* isolated
-			- does not depend on third-party packages or other files 
-			- can be used as is
-        
+    NOTES
+		* does not require other files 
         * printable / narrow width
 
-		* implements common operations 
-			
-            Location Operations
-            - at(index)
+	API		
+        Location Operations
+            - at(index) 
             - search(value) 
             - search_node(node) 
             - index(value)
             - node_index(node) 
-            
-            Insertion Operations
+        
+        Insertion Operations
             - insert(pos, value) 
             - insert_node(pos, node) 
             - prepend(value) 
@@ -28,25 +26,28 @@
             - insert_node_after(node, new_node) 
             - insert_before(node, value) 
             - insert_node_before(node, new_node) 
-            
-            Deletion Operations 
-            - delete(value) 
+                
+        Deletion Operations 
+            - delete(pos) 
             - delete_node(node)
             - delete_head() 
             - delete_tail() 
             - delete_after(node) 
             - delete_before(node)
+            - remove(value) 
 
-            Utility Functions 
+        Utility Functions 
             - predecessor(node) 
             - successor(node)
+            - prepredecessor(node)
+            - postsucessor(node)
 
-            Traversal Operations 
+        Traversal Operations 
+            - iterate()
             - traverse(cb) 
             - traverse_backwards(cb) 
             - traverse_range(i, j, cb)
-
-''' 
+"""
 
 class CDLL_Node: 
     def __init__(self, value): 
@@ -300,6 +301,10 @@ class CDLL:
             prepredecessor = self.prepredecessor(node) 
             prepredecessor.next = node   
             node.prev = prepredecessor
+
+    def remove(self, value): 
+        node = self.search(value)
+        self.delete_node(node)
 
     # --- UTILITY FUNCTIONS --- # 
     def predecessor(self, node):
