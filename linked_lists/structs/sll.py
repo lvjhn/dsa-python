@@ -41,12 +41,8 @@
             - successor(node)
             - prepredecessor(node)
             - postsucessor(node)
-
-        Traversal Operations 
+            - size()
             - iterate()
-            - traverse(cb) 
-            - traverse_backwards(cb) 
-            - traverse_range(i, j, cb)
 """
 
 class SLL_Node: 
@@ -58,13 +54,13 @@ class SLL:
     def __init__(self): 
         self.head = None 
         self.tail = None 
-        self.size = 0 
+        self.count = 0 
 
     # --- LOCATION OPERATIONS --- #
     
     def at(self, index): 
         i = 0 
-        index = index % self.size 
+        index = index % self.count 
         current = self.head 
         while i < index: 
             current = current.next 
@@ -118,17 +114,17 @@ class SLL:
         if pos == 0: 
             self.prepend_node(node)
         # insert at end of the list 
-        elif pos == self.size: 
+        elif pos == self.count: 
             self.append_node(node)
         # insert at the middle of the list 
-        elif pos > 0 and pos < self.size: 
+        elif pos > 0 and pos < self.count: 
             predecessor = self.at(pos - 1) 
             successor = predecessor.next 
             node.next = successor 
             predecessor.next = node 
 
             # increase size of list 
-            self.size += 1
+            self.count += 1
         # out of bounds 
         else:
             error = f"Out of bounds ({pos})" + \
@@ -149,7 +145,7 @@ class SLL:
             self.head = node   
 
         # increase size of list 
-        self.size += 1 
+        self.count += 1 
 
     def append(self, value): 
         node = SLL_Node(value) 
@@ -165,7 +161,7 @@ class SLL:
             self.tail = node 
 
         # increase size of list 
-        self.size += 1
+        self.count += 1
 
     def insert_after(self, node, value):
         new_node = SLL_Node(value)
@@ -181,7 +177,7 @@ class SLL:
             node.next = new_node 
         
         # increase size of list 
-        self.size += 1 
+        self.count += 1 
     
     def insert_before(self, node, value): 
         new_node = SLL_Node(value) 
@@ -192,12 +188,12 @@ class SLL:
         if node is self.head: 
             self.prepend_node(new_node)
         else: 
-            predecessor = self.predecessor(node)         
+            predecessor = self.predecessor(node)     
             new_node.next = node 
             predecessor.next = new_node 
 
         # increase size of list 
-        self.size += 1
+        self.count += 1
 
     # --- DELETION OPERATONS --- # 
     def delete(self, pos):
@@ -205,10 +201,10 @@ class SLL:
         if pos == 0: 
             self.delete_head()
         # delete at end of the list 
-        elif pos == self.size: 
+        elif pos == self.count: 
             self.delete_tail()
         # delete at the middle of the list 
-        elif pos > 0 and pos < self.size: 
+        elif pos > 0 and pos < self.count: 
             self.delete_node(self.at(pos))
         else:
             error = f"Out of bounds ({index})" + \
@@ -227,7 +223,7 @@ class SLL:
             predecessor.next = predecessor.next.next 
 
             # decrease size of list
-            self.size -= 1  
+            self.count -= 1  
 
     def delete_head(self): 
         # move head pointer
@@ -238,7 +234,7 @@ class SLL:
             self.head = self.head.next  
 
         # decrease size of list 
-        self.size -= 1 
+        self.count -= 1 
 
     def delete_tail(self): 
         # move tail pointer 
@@ -251,20 +247,19 @@ class SLL:
             self.tail = predecessor 
 
         # decrease size of list 
-        self.size -= 1 
+        self.count -= 1 
 
     def delete_after(self, node):
         if node is self.tail: 
             raise Exception("Out of bounds when deleting node.") 
         else: 
-            node.next = node.next.next   
+            self.delete_node(self.successor(node))
 
     def delete_before(self, node): 
         if node is self.head:  
             raise Exception("Out of bounds when deleting node.") 
         else: 
-            prepredecessor = self.prepredecessor(node) 
-            prepredecessor.next = node   
+            self.delete_node(self.predecessor(node)) 
 
     def remove(self, value): 
         node = self.head 
@@ -305,8 +300,10 @@ class SLL:
 
     def postsucessor(self, node): 
         return node.next.next 
+
+    def size(self): 
+        return self.count
          
-    # --- TRAVERSAL OPERATIONS --- # 
     def iterate(self): 
         current = self.head 
         
@@ -316,40 +313,3 @@ class SLL:
         while current is not None: 
             yield current 
             current = current.next 
-
-    def traverse(self, cb): 
-        current = self.head 
-        i = 0 
-        while current is not None: 
-            res = cb(current, i)
-            if res: return res  
-            i += 1
-            current = current.next
-        return None 
-
-    def traverse_backwards(self, cb):
-        current = self.head 
-        stack = []  
-        while current is not None: 
-            stack.append(current)
-            current = current.next 
-        i = len(stack) - 1
-        while len(stack) > 0 : 
-            current = stack[-1]
-            res = cb(current, i)
-            if res: return res 
-            stack.pop(len(stack) - 1)
-            i -= 1
-        return None
-
-    def traverse_range(self, i, j, cb): 
-        current = self.head 
-        idx = 0
-        while current is not None: 
-            if idx >=i and idx < j:  
-                res = cb(current, i)
-                if res: return res 
-            idx += 1 
-            current = current.next 
-        return None 
-

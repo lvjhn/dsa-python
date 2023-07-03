@@ -41,12 +41,8 @@
             - successor(node)
             - prepredecessor(node)
             - postsucessor(node)
-
-        Traversal Operations 
+            - size()
             - iterate()
-            - traverse(cb) 
-            - traverse_backwards(cb) 
-            - traverse_range(i, j, cb)
 """
 
 class DLL_Node: 
@@ -59,7 +55,7 @@ class DLL:
     def __init__(self): 
         self.head = None 
         self.tail = None 
-        self.size = 0 
+        self.count = 0 
 
     # --- LOCATION OPERATIONS --- #
     
@@ -68,7 +64,7 @@ class DLL:
             Returns node at a given index. 
         """
         i = 0 
-        index = index % self.size 
+        index = index % self.count 
         current = self.head 
         while i < index: 
             current = current.next 
@@ -128,10 +124,10 @@ class DLL:
         if pos == 0: 
             self.prepend_node(node)
         # insert at end of the list 
-        elif pos == self.size: 
+        elif pos == self.count: 
             self.append_node(node)
         # insert at the middle of the list 
-        elif pos > 0 and pos < self.size: 
+        elif pos > 0 and pos < self.count: 
             # find predecessor and successor
             predecessor = self.at(pos - 1) 
             successor = predecessor.next 
@@ -145,7 +141,7 @@ class DLL:
             successor.prev = node 
 
             # increase size of list 
-            self.size += 1
+            self.count += 1
         # out of bounds 
         else:
             error = f"Out of bounds ({pos})" + \
@@ -167,7 +163,7 @@ class DLL:
             self.head = node               
 
         # increase size of list 
-        self.size += 1 
+        self.count += 1 
 
     def append(self, value): 
         node = DLL_Node(value) 
@@ -184,7 +180,7 @@ class DLL:
             self.tail = node 
 
         # increase size of list 
-        self.size += 1
+        self.count += 1
 
     def insert_after(self, node, value):
         new_node = DLL_Node(value)
@@ -204,7 +200,7 @@ class DLL:
             successor.prev = new_node 
             
         # increase size of list 
-        self.size += 1 
+        self.count += 1 
     
     def insert_before(self, node, value): 
         new_node = DLL_Node(value) 
@@ -224,7 +220,7 @@ class DLL:
             node.prev = new_node 
 
         # increase size of list 
-        self.size += 1
+        self.count += 1
 
     # --- DELETION OPERATONS --- # 
     def delete(self, pos):
@@ -232,10 +228,10 @@ class DLL:
         if pos == 0: 
             self.delete_head()
         # delete at end of the list 
-        elif pos == self.size: 
+        elif pos == self.count: 
             self.delete_tail()
         # delete at the middle of the list 
-        elif pos > 0 and pos < self.size: 
+        elif pos > 0 and pos < self.count: 
             self.delete_node(self.at(pos))
         else:
             error = f"Out of bounds ({index})" + \
@@ -243,18 +239,19 @@ class DLL:
             raise Exception(error)
 
 
-    def delete_node(self, node): 
+    def delete_node(self, node, predecessor = None): 
         if node is self.head: 
             self.delete_head() 
         elif node is self.tail: 
             self.delete_tail() 
         else: 
-            predecessor = self.predecessor(node) 
+            if predecessor is None:
+                predecessor = self.predecessor(node) 
             node.next.prev = predecessor 
             predecessor.next = node.next 
             
             # decrease size of list
-            self.size -= 1  
+            self.count -= 1  
 
     def delete_head(self): 
         # move head pointer
@@ -266,7 +263,7 @@ class DLL:
             self.head = self.head.next 
 
         # decrease size of list 
-        self.size -= 1 
+        self.count -= 1 
 
     def delete_tail(self): 
         # move tail pointer 
@@ -279,7 +276,7 @@ class DLL:
             self.tail = predecessor 
 
         # decrease size of list 
-        self.size -= 1 
+        self.count -= 1 
 
     def delete_after(self, node):
         if node is self.tail: 
@@ -313,8 +310,10 @@ class DLL:
 
     def postsucessor(self, node): 
         return node.next.next 
+
+    def size(self): 
+        return self.count
          
-    # --- TRAVERSAL OPERATIONS --- # 
     def iterate(self): 
         current = self.head 
         
@@ -324,35 +323,3 @@ class DLL:
         while current is not None:
             yield current 
             current = current.next
-
-    def traverse(self, cb): 
-        current = self.head 
-        i = 0 
-        while current is not None: 
-            res = cb(current, i)
-            if res: return res  
-            i += 1
-            current = current.next
-        return None 
-
-    def traverse_backwards(self, cb):
-        current = self.tail 
-        i =  self.size - 1
-        while current is not None: 
-            res = cb(current, i)
-            if res: return res 
-            i -= 1
-            current = current.prev
-        return None
-
-    def traverse_range(self, i, j, cb): 
-        current = self.head 
-        idx = 0
-        while current is not None: 
-            if idx >=i and idx < j:  
-                res = cb(current, i)
-                if res: return res 
-            idx += 1 
-            current = current.next 
-        return None 
-

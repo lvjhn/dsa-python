@@ -41,12 +41,9 @@
             - successor(node)
             - prepredecessor(node)
             - postsucessor(node)
-
-        Traversal Operations 
+            - size()
             - iterate()
-            - traverse(cb) 
-            - traverse_backwards(cb) 
-            - traverse_range(i, j, cb)
+
 """
 
 class CSLL_Node: 
@@ -58,13 +55,13 @@ class CSLL:
     def __init__(self): 
         self.head = None 
         self.tail = None 
-        self.size = 0 
+        self.count = 0 
 
     # --- LOCATION OPERATIONS --- #
     
     def at(self, index): 
         i = 0 
-        index = index % self.size 
+        index = index % self.count 
         current = self.head 
         while i < index: 
             current = current.next 
@@ -73,10 +70,12 @@ class CSLL:
     
     def search(self, value): 
         current = self.head 
-        while current is not None: 
+        while True: 
             if current.value == value: 
                 return current
             current = current.next 
+            if current is self.head: 
+                break
         return None 
     
     def search_node(self, node):
@@ -118,17 +117,17 @@ class CSLL:
         if pos == 0: 
             self.prepend_node(node)
         # insert at end of the list 
-        elif pos == self.size: 
+        elif pos == self.count: 
             self.append_node(node)
         # insert at the middle of the list 
-        elif pos > 0 and pos < self.size: 
+        elif pos > 0 and pos < self.count: 
             predecessor = self.at(pos - 1) 
             successor = predecessor.next 
             node.next = successor 
             predecessor.next = node 
 
             # increase size of list 
-            self.size += 1
+            self.count += 1
         # out of bounds 
         else:
             error = f"Out of bounds ({pos})" + \
@@ -152,7 +151,7 @@ class CSLL:
             self.tail.next = self.head
 
         # increase size of list 
-        self.size += 1 
+        self.count += 1 
 
     def append(self, value): 
         node = CSLL_Node(value) 
@@ -171,7 +170,7 @@ class CSLL:
             self.tail.next = self.head
 
         # increase size of list 
-        self.size += 1
+        self.count += 1
 
     def insert_after(self, node, value):
         new_node = CSLL_Node(value)
@@ -188,7 +187,7 @@ class CSLL:
             node.next = new_node 
         
         # increase size of list 
-        self.size += 1 
+        self.count += 1 
     
     def insert_before(self, node, value): 
         new_node = CSLL_Node(value) 
@@ -204,7 +203,7 @@ class CSLL:
             predecessor.next = new_node 
 
         # increase size of list 
-        self.size += 1
+        self.count += 1
 
     # --- DELETION OPERATONS --- # 
     def delete(self, pos):
@@ -212,10 +211,10 @@ class CSLL:
         if pos == 0: 
             self.delete_head()
         # delete at end of the list 
-        elif pos == self.size: 
+        elif pos == self.count: 
             self.delete_tail()
         # delete at the middle of the list 
-        elif pos > 0 and pos < self.size: 
+        elif pos > 0 and pos < self.count: 
             self.delete_node(self.at(pos))
         else:
             error = f"Out of bounds ({index})" + \
@@ -233,7 +232,7 @@ class CSLL:
             predecessor.next = node.next 
 
             # decrease size of list
-            self.size -= 1  
+            self.count -= 1  
 
     def delete_head(self): 
         # move head pointer
@@ -247,7 +246,7 @@ class CSLL:
             self.tail.next = self.head
 
         # decrease size of list 
-        self.size -= 1 
+        self.count -= 1 
 
     def delete_tail(self): 
         # move tail pointer 
@@ -263,7 +262,7 @@ class CSLL:
             self.tail.next = self.head
 
         # decrease size of list 
-        self.size -= 1 
+        self.count -= 1 
 
     def delete_after(self, node):
         if node is self.tail: 
@@ -318,8 +317,10 @@ class CSLL:
 
     def postsucessor(self, node): 
         return node.next.next 
+
+    def size(self): 
+        return self.count
          
-    # --- TRAVERSAL OPERATIONS --- # 
     def iterate(self):
         current = self.head 
 
@@ -331,46 +332,3 @@ class CSLL:
             current = current.next
             if current is self.head: 
                 break
-
-    def traverse(self, cb): 
-        current = self.head 
-        i = 0 
-        while True: 
-            res = cb(current, i)
-            if res: return res  
-            i += 1
-            current = current.next
-            if current is self.head: 
-                break 
-        return None 
-
-    def traverse_backwards(self, cb):
-        current = self.head 
-        stack = []  
-        while True: 
-            stack.append(current)
-            current = current.next
-            if current is self.head: 
-                break  
-        i = len(stack) - 1
-        while len(stack) > 0 : 
-            current = stack[-1]
-            res = cb(current, i)
-            if res: return res 
-            stack.pop(len(stack) - 1)
-            i -= 1
-        return None
-
-    def traverse_range(self, i, j, cb): 
-        current = self.head 
-        idx = 0
-        while True: 
-            if idx >= i and idx < j:  
-                res = cb(current, idx)
-                if res: return res 
-            idx += 1 
-            current = current.next 
-            if idx >= j: 
-                break
-        return None 
-
