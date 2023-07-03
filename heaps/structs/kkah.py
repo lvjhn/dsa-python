@@ -1,5 +1,62 @@
 """ 
-    KEYED D-ARY/K-ARY HEAP IMPLEMENTATION (PYTHON)
+    ##################################################
+    # KEYED D-ARY/K-ARY HEAP IMPLEMENTATION [PYTHON] #
+    ##################################################
+
+    NOTES 
+        * array based 
+		* does not require other files
+		* printable / narrow width
+
+    API 
+        KBH_Item 
+            Properties 
+                - key 
+                - value 
+                - data 
+
+        KBH 
+            Properties 
+                - items 
+                - type 
+                - key_no 
+                - key_map
+            
+            Utility Methods 
+                - comparator(a, b) 
+                - bubble_up(arr, i)
+                - bubble_down(arr, i)
+                - keyfy(items) 
+                - swap_key_map(i, j)
+                - parent(i)
+                - child(i, j) 
+                - update_a(key, value)
+                - update_b(key, value)
+                - display()
+
+            Main Operations
+                - heapify_up(items, keyfy) 
+                - heapify_down(items, keyfy) 
+                - insert(key, value, data)
+                - insert_node(node)
+                - pop() 
+                - delete(key)
+
+            Accessors / Mutators  
+                - update(key, new_value)
+                - keys()
+                - values()
+                - top()
+                - size()
+                - get_data(key)
+                - set_data(key, data) 
+                - get_value(key) 
+                - set_value(key, value)
+                - get_item(key) 
+                - set_item(key, data) 
+                - display()
+                - min() 
+                - max() 
 """ 
 
 class KKAH_Item: 
@@ -16,12 +73,46 @@ class KKAH:
         self.degree = 3 
         self.type = type_
 
-    
+    #
+    # UTILITY METHODS
+    # 
+
     def comparator(self, a, b): 
         if self.type == "min": 
             return a.value < b.value 
         elif self.type == "max": 
             return a.value > b.value 
+    
+    def bubble_down(self, arr, i): 
+        n = len(arr) 
+        d = self.degree
+
+        while 2 * i + 1 < n: 
+            m = i 
+            for j in range(d): 
+                c = self.child(i, j) 
+                if c < n and self.comparator(arr[c], arr[m]): 
+                    m = c 
+            if m == i: 
+                break  
+            else: 
+                self.swap_key_map(m, i) 
+                arr[m], arr[i] = arr[i], arr[m] 
+                i = m 
+
+        return arr 
+
+    def bubble_up(self, arr, i): 
+        d = self.degree 
+        while i > 0: 
+            p = self.parent(i)
+            if self.comparator(arr[i], arr[p]):
+                self.swap_key_map(p, i)
+                arr[p], arr[i] = arr[i], arr[p] 
+                i = p 
+            else: 
+                break 
+        return arr 
     
     def keyfy(self, items): 
         if type(items) is list: 
@@ -56,36 +147,29 @@ class KKAH:
             raise Exception(error)
         return 2 * i + j 
 
-    def bubble_down(self, arr, i): 
-        n = len(arr) 
-        d = self.degree
+    def update_a(self, key, value): 
+        arr = self.items 
+        i = self.key_map[key] 
+        arr[i].value = value
+        self.bubble_up(arr, i) 
 
-        while 2 * i + 1 < n: 
-            m = i 
-            for j in range(d): 
-                c = self.child(i, j) 
-                if c < n and self.comparator(arr[c], arr[m]): 
-                    m = c 
-            if m == i: 
-                break  
-            else: 
-                self.swap_key_map(m, i) 
-                arr[m], arr[i] = arr[i], arr[m] 
-                i = m 
+    def update_b(self, key, value): 
+        arr = self.items
+        i = self.key_map[key] 
+        arr[i].value = value
+        n = len(arr)
+        self.bubble_down(arr, i)
 
-        return arr 
+    def display(self): 
+        text = [] 
+        for item in self.items: 
+            text.append(f"(k: {item.key}, v: {item.value}, " + \
+                        f"d: {item.data})")
+        print(", ".join(text))
 
-    def bubble_up(self, arr, i): 
-        d = self.degree 
-        while i > 0: 
-            p = self.parent(i)
-            if self.comparator(arr[i], arr[p]):
-                self.swap_key_map(p, i)
-                arr[p], arr[i] = arr[i], arr[p] 
-                i = p 
-            else: 
-                break 
-        return arr 
+    #
+    # MAIN OPERATIONS
+    #
 
     def heapify_up(self, arr, keyfy = True): 
         self.items = arr 
@@ -150,6 +234,10 @@ class KKAH:
         self.update(key, rem_val) 
         self.pop()
 
+    #
+    # ACCESSORS / MUTATORS
+    #
+
     def update(self, key, new_value): 
         arr = self.items 
         if key not in self.key_map: 
@@ -163,19 +251,6 @@ class KKAH:
             self.update_a(key, new_value)
         else:   
             self.update_b(key, new_value)
-
-    def update_a(self, key, value): 
-        arr = self.items 
-        i = self.key_map[key] 
-        arr[i].value = value
-        self.bubble_up(arr, i) 
-
-    def update_b(self, key, value): 
-        arr = self.items
-        i = self.key_map[key] 
-        arr[i].value = value
-        n = len(arr)
-        self.bubble_down(arr, i)
 
     def items(self): 
         for item in self.items: 
@@ -212,12 +287,6 @@ class KKAH:
 
     def set_item(self, key, item): 
         self.key_map[key] = item
-
-    def display(self): 
-        text = [] 
-        for item in self.items: 
-            text.append(f"(k: {item.key}, v: {item.value}, d: {item.data})")
-        print(", ".join(text))
 
     def min(self): 
         if self.type != "min":

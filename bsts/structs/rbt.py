@@ -1,10 +1,52 @@
 """ 
-    RED-BLACK TREE IMPLEMENTATION (PYTHON)
+    ##########################################
+    # RED-BLACK TREE IMPLEMENTATION [PYTHON] #
+    ##########################################
 
-    NOTES: 
-        * reference (slightly modified)
-            https://www.programiz.com/dsa/red-black-tree
+    NOTES 
+        * main source: programiz.com (modified implementation)
+        * does not require other files
+		* printable / narrow width 
 
+    API 
+        RBT_Node 
+            Properties 
+                - key 
+                - value 
+                - parent 
+                - left 
+                - right 
+                - color 
+        
+        RBT 
+            Properties 
+                - TNULL 
+                - root 
+                - count 
+            
+            Utility Methods 
+                - size() 
+                - find_min(root)  
+                - find_max(root) 
+                - update_height(node)
+                - find(key, root)
+                - transplant(u, v)
+                - display() 
+                - display_node(root, indent, orient) 
+
+            Rotation Methods
+                - left_rotate(x) 
+                - right_rotate(x)
+                - left_right_rotate(A) 
+                - right_left_rotate(A) 
+            
+            Main Operations 
+                - insert(key, value) 
+                - insert_node(root, node, parent) 
+                - rebalance_insert(k)
+                - delete(key) 
+                - delete_node(root, key)
+                - rebalance_delete(k)
 """ 
 
 
@@ -27,6 +69,10 @@ class RBT():
         self.TNULL.right = None
         self.root = self.TNULL
         self.count = 0
+
+    #
+    # UTILITY METHODS
+    #
 
     def size(self): 
         return self.count 
@@ -55,7 +101,6 @@ class RBT():
 
 
     def find(self, key, root = None): 
-            
         if root is None: 
             current = self.root 
         else: 
@@ -80,6 +125,27 @@ class RBT():
             u.parent.right = v
         v.parent = u.parent
 
+    def display(self): 
+        self.display_node(self.root, 0, "root")
+
+    def display_node(self, root, indent, orient):
+        if root is self.TNULL:
+            return 
+
+        print(
+            "    " * indent + \
+            f"{orient} : {root.key} -> " +
+            f"c: {root.color}, " + 
+            f"v: {root.value}" 
+        )
+        
+        self.display_node(root.left, indent + 1, "left")
+        self.display_node(root.right, indent + 1, "right")
+
+
+    #
+    # ROTATION METHODS
+    #
 
     def left_rotate(self, x):
         y = x.right
@@ -117,16 +183,23 @@ class RBT():
 
         return y
 
+    #
+    # MAIN OPERATIONS
+    # 
+
     def insert(self, key, value):
         node = RBT_Node(key, value)
         node.parent = None
         node.left = self.TNULL
         node.right = self.TNULL
         node.color = 1
+        self.insert_node(node)
         self.count += 1
 
+
+    def insert_node(self, node): 
         y = None
-        x = self.root
+        x = root
 
         while x != self.TNULL:
             y = x
@@ -295,19 +368,3 @@ class RBT():
 
     
 
-    def display(self): 
-        self.display_node(self.root, 0, "root")
-
-    def display_node(self, root, indent, orient):
-        if root is self.TNULL:
-            return 
-
-        print(
-            "    " * indent + \
-            f"{orient} : {root.key} -> " +
-            f"c: {root.color}, " + 
-            f"v: {root.value}" 
-        )
-        
-        self.display_node(root.left, indent + 1, "left")
-        self.display_node(root.right, indent + 1, "right")

@@ -1,5 +1,73 @@
 """ 
-    KEYED MIN-MAX HEAP IMPLEMENTATION 
+    ##############################################
+    # KEYED MIN-MAX HEAP IMPLEMENTATION [PYTHON] #
+    ############################################## 
+    
+    NOTES 
+        * array based 
+        * source: wikipedia.org (modified implementation)
+		* does not require other files
+		* printable / narrow width
+
+    API 
+        KBH_Item 
+            Properties 
+                - key 
+                - value 
+                - data 
+
+        KBH 
+            Properties 
+                - items 
+                - type 
+                - key_no 
+                - key_map
+            
+            Utility Methods 
+                - comparator(a, b) 
+                - keyfy(items) 
+                - swap_key_map(i, j)
+                - parent(i)
+                - left_child(i) 
+                - right_child(i) 
+                - smallest_child_or_grandchild(h, i) 
+                - largest_child_or_grandchild(h, i) 
+                - push_down(h, i) 
+                - push_down_min(h, i) 
+                - push_down_max(h, i) 
+                - push_down_iter(h, m) 
+                - push_up(h, i) 
+                - push_up_min(h, i) 
+                - push_up_max(h, i) 
+                - push_up_min_iter(h, i) 
+                - push_up_max_iter(h, i)
+                - update_a(key, value)
+                - update_b(key, value)
+                - display()
+
+            Main Operations
+                - build_heap(h, keyfy)
+                - insert(key, value, data)
+                - pop_min()  
+                - pop_max()
+                - delete(key)
+
+            Accessors / Mutators  
+                - update(key, new_value)
+                - keys()
+                - values()
+                - top()
+                - size()
+                - get_data(key)
+                - set_data(key, data) 
+                - get_value(key) 
+                - set_value(key, value)
+                - get_item(key) 
+                - set_item(key, data) 
+                - display()
+                - min() 
+                - max() 
+    
 """ 
 import math
 
@@ -14,6 +82,10 @@ class KMMH:
         self.items = [] 
         self.key_no = 0  
         self.key_map = {}
+
+    #
+    # GENERAL OPERATIONS
+    #  
 
     def comparator(self, a, b):
         return a.value < b.value
@@ -111,18 +183,7 @@ class KMMH:
 
         return m
 
-    def build_heap(self, h, keyfy = True): 
-        if keyfy: 
-            h = self.keyfy(h)
-        
-        self.items = h
-
-        n = len(h)
-        for i in range(n // 2, -1, -1): 
-            self.push_down(h, i)
-        
-        return h 
-
+    
     def push_down(self, h, i): 
         if self.level(i) % 2 == 0: 
             self.push_down_min(h, i)
@@ -261,6 +322,29 @@ class KMMH:
 
             i = gpi 
             gpi = self.parent(self.parent(i))
+
+    def display(self): 
+        text = [] 
+        for item in self.items: 
+            text.append(f"(k: {item.key}, v: {item.value}, " + \
+                        f"d: {item.data})")
+        print(", ".join(text))
+
+    # 
+    # MAIN OPERATIONS
+    # 
+
+    def build_heap(self, h, keyfy = True): 
+        if keyfy: 
+            h = self.keyfy(h)
+        
+        self.items = h
+
+        n = len(h)
+        for i in range(n // 2, -1, -1): 
+            self.push_down(h, i)
+        
+        return h 
          
     def insert(self, key, value, data = None): 
         item = KMMH_Item(key, value, data)
@@ -324,6 +408,10 @@ class KMMH:
         arr[i].value = float('-inf') 
         self.push_up(arr, i)
         self.pop_min()
+
+    #
+    # ACCESSORS / MUTATORS
+    # 
 
     def update(self, key, new_value): 
         arr = self.items
@@ -396,11 +484,6 @@ class KMMH:
     def set_item(self, key, item): 
         self.key_map[key] = item
 
-    def display(self): 
-        text = [] 
-        for item in self.items: 
-            text.append(f"(k: {item.key}, v: {item.value}, d: {item.data})")
-        print(", ".join(text))
 
     def size(self): 
         return len(self.items)

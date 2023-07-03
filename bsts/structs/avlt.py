@@ -1,9 +1,50 @@
 """ 
-    AVL TREE IMPLEMENTATION (PYTHON)
+    ####################################
+    # AVL TREE IMPLEMENTATION (PYTHON) #
+    ####################################
 
-    NOTES: 
-        * reference (slightly modified)
-            https://www.programiz.com/dsa/avl-tree
+    NOTES 
+        * main source: programiz.com (modified implementation)
+        * does not require other files
+		* printable / narrow width 
+
+    API 
+        AVLT_Node 
+            - key 
+            - value 
+            - height 
+            - parent 
+            - left 
+            - right 
+
+        AVLT 
+            Properties 
+                - count 
+                - root 
+
+            Utility Methods 
+                - size() 
+                - get_height(root) 
+                - get_balance_factor(root) 
+                - find_min(root)  
+                - find_max(root) 
+                - find(key, root)
+                - update_height(node)
+                - display() 
+                - display_node(root, indent, orient)
+            
+            Rotation Methods
+                - left_rotate(x) 
+                - right_rotate(x)
+                - left_right_rotate(A) 
+                - right_left_rotate(A) 
+            
+            Main Operations 
+                - insert(key, value) 
+                - insert_node(root, node, parent) 
+                - delete(key) 
+                - delete_node(root, key)
+
 """ 
 
 class AVLT_Node(): 
@@ -21,6 +62,10 @@ class AVLT:
     def __init__(self): 
         self.count = 0 
         self.root = None 
+
+    #
+    # UTILITY METHODS
+    # 
 
     def size(self): 
         return self.count 
@@ -46,6 +91,24 @@ class AVLT:
 
         return self.find_min(root.left)
 
+    def find(self, key, root = None): 
+        if self.root is None: 
+            return None 
+            
+        if root is None: 
+            current = self.root 
+        else: 
+            current = root 
+
+        while current is not None: 
+            if key < current.key:
+                current = current.left
+            elif key > current.key: 
+                current = current.right
+            else: 
+                return current 
+        return None
+
     def find_max(self, root): 
         if root is None: 
             return None 
@@ -56,6 +119,34 @@ class AVLT:
             return root 
 
         return self.find_max(root.right)
+
+    
+    def update_height(self, node): 
+        node.height = 1 + max(self.get_height(node.left), 
+                              self.get_height(node.right))
+
+    def display(self): 
+        self.display_node(self.root, 0, "root")
+
+    def display_node(self, root, indent, orient):
+        if root is None:
+            return 
+
+        print(
+            "    " * indent + \
+            f"{orient} : {root.key} -> " +
+            f"h: {self.get_height(root)}, " + 
+            f"bf: {self.get_balance_factor(root)}, " + 
+            f"v: {root.value}" 
+        )
+        
+        self.display_node(root.left, indent + 1, "left")
+        self.display_node(root.right, indent + 1, "right")
+
+
+    #
+    # ROTATION METHODS
+    #
 
     def left_rotate(self, x): 
         y = x.right
@@ -119,28 +210,9 @@ class AVLT:
         self.right_rotate(B) 
         return self.left_rotate(A)
 
-    def update_height(self, node): 
-        node.height = 1 + max(self.get_height(node.left), 
-                              self.get_height(node.right))
-
-
-    def find(self, key, root = None): 
-        if self.root is None: 
-            return None 
-            
-        if root is None: 
-            current = self.root 
-        else: 
-            current = root 
-
-        while current is not None: 
-            if key < current.key:
-                current = current.left
-            elif key > current.key: 
-                current = current.right
-            else: 
-                return current 
-        return None
+    #
+    # MAIN OPERATIONS 
+    # 
 
     def insert(self, key, value): 
         node = AVLT_Node(key, value) 
@@ -236,22 +308,7 @@ class AVLT:
                 return self.left_rotate(root)
             else:
                 return self.right_left_rotate(root)
+
         return root 
 
-    def display(self): 
-        self.display_node(self.root, 0, "root")
-
-    def display_node(self, root, indent, orient):
-        if root is None:
-            return 
-
-        print(
-            "    " * indent + \
-            f"{orient} : {root.key} -> " +
-            f"h: {self.get_height(root)}, " + 
-            f"bf: {self.get_balance_factor(root)}, " + 
-            f"v: {root.value}" 
-        )
-        
-        self.display_node(root.left, indent + 1, "left")
-        self.display_node(root.right, indent + 1, "right")
+    

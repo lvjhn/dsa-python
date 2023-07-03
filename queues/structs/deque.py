@@ -1,6 +1,23 @@
 """ 
-    DOUBLE-ENDED QUEUE IMPLEMENTATION 
-    (Uses Doubly-Linked List) 
+    #####################################
+    # DOUBLE-ENDED QUEUE IMPLEMENTATION #
+    ##################################### 
+
+    NOTES 
+		* doubly linked-list based 
+		* does not require other files
+		* printable / narrow width
+
+	API 
+		Dequeue 
+			- front()
+			- back() 
+			- enqueue_front(item) 
+			- enqueue_back(item)
+            - dequeue_front() 
+            - dequeue_back() 
+            - size() 
+
 """ 
 from linked_lists.structs.dll import DLL
 
@@ -30,5 +47,5 @@ class Deque:
         self.items.delete_tail() 
         return back     
 
-    def length(self): 
+    def size(self): 
         return self.items.size 

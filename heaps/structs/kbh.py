@@ -1,34 +1,58 @@
 ''' 
-    KEYED BINARY-HEAP IMPLEMENTATION (PYTHON)
-    (Modified Binary Heap with Custom Keys)
+    #############################################
+    # KEYED BINARY-HEAP IMPLEMENTATION [PYTHON] #
+    #############################################
 
-    * implements common operations
-        - comparator(a, b) 
-        - bubble_up(arr, i)
-        - bubble_down(arr, i)
-        - keyfy(items) 
-        - swap_key_map(i, j)
-        - heapify_up(items, keyfy) 
-        - heapify_down(items, keyfy) 
-        - insert(key, value, data)
-        - insert_node(node)
-        - delete() 
-        - update(key, new_value)
-        - update_a(key, value)
-        - update_b(key, value)  
-        - keys()
-        - values()
-        - top()
-        - size()
-        - get_data(key)
-        - set_data(key, data) 
-        - get_value(key) 
-        - set_value(key, value)
-        - get_item(key) 
-        - set_item(key, data) 
-        - display()
-        - min() 
-        - max() 
+    NOTES 
+        * array based 
+		* does not require other files
+		* printable / narrow width
+
+    API 
+        KBH_Item 
+            Properties 
+                - key 
+                - value 
+                - data 
+
+        KBH 
+            Properties 
+                - items 
+                - type 
+                - key_no 
+                - key_map
+            
+            Utility Methods 
+                - comparator(a, b) 
+                - bubble_up(arr, i)
+                - bubble_down(arr, i)
+                - keyfy(items) 
+                - swap_key_map(i, j)
+                - update_a(key, value)
+                - update_b(key, value)
+                - display()
+
+            Main Operations
+                - heapify_up(items, keyfy) 
+                - heapify_down(items, keyfy) 
+                - insert(key, value, data)
+s                - pop() 
+                - delete(key)
+
+            Accessors / Mutators  
+                - update(key, new_value)
+                - keys()
+                - values()
+                - top()
+                - size()
+                - get_data(key)
+                - set_data(key, data) 
+                - get_value(key) 
+                - set_value(key, value)
+                - get_item(key) 
+                - set_item(key, data) 
+                - min() 
+                - max() 
 
 ''' 
 
@@ -45,6 +69,10 @@ class KBH:
         self.type = type_
         self.key_no = 0  
         self.key_map = {}
+
+    #
+    # UTILITY METHODS
+    #
 
     def comparator(self, a, b): 
         if self.type == "min": 
@@ -109,6 +137,30 @@ class KBH:
                 break   
         return arr
 
+    def update_a(self, key, value): 
+        arr = self.items 
+        i = self.key_map[key] 
+        arr[i].value = value
+        self.bubble_up(arr, i) 
+
+    def update_b(self, key, value): 
+        arr = self.items
+        i = self.key_map[key] 
+        arr[i].value = value
+        n = len(arr)
+        self.bubble_down(arr, i)
+
+    def display(self): 
+        text = [] 
+        for item in self.items: 
+            text.append(f"(k: {item.key}, v: {item.value}, " + \
+                        f"d: {item.data})")
+        print(", ".join(text))
+
+
+    #
+    # MAIN OPERATIONS
+    # 
 
     def heapify_up(self, arr, keyfy = True): 
         self.items = arr
@@ -165,6 +217,10 @@ class KBH:
         self.update(key, rem_val) 
         self.pop()
 
+    #
+    # ACCESSORS / MUTATORS
+    # 
+
     def update(self, key, new_value): 
         arr = self.items 
         if key not in self.key_map: 
@@ -180,18 +236,6 @@ class KBH:
         else:   
             self.update_b(key, new_value)
      
-    def update_a(self, key, value): 
-        arr = self.items 
-        i = self.key_map[key] 
-        arr[i].value = value
-        self.bubble_up(arr, i) 
-
-    def update_b(self, key, value): 
-        arr = self.items
-        i = self.key_map[key] 
-        arr[i].value = value
-        n = len(arr)
-        self.bubble_down(arr, i)
 
     def items(self): 
         for item in self.items: 
@@ -228,12 +272,6 @@ class KBH:
 
     def set_item(self, key, item): 
         self.key_map[key] = item
-
-    def display(self): 
-        text = [] 
-        for item in self.items: 
-            text.append(f"(k: {item.key}, v: {item.value}, d: {item.data})")
-        print(", ".join(text))
 
     def min(self): 
         if self.type != "min":

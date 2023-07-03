@@ -1,6 +1,74 @@
 '''
-    DOUBLY LINKED-LIST IMPLEMENTATION (PYTHON)
-''' 
+    ######################################
+    # HASH TABLE IMPLEMENTATION [PYTHON] #
+    ######################################
+
+    NOTES   
+        * main source: programiz.com (modified implementation)
+        * requires singly linked-list (same project)
+		* printable / narrow width 
+
+    API  
+        HashTable   
+            Properties
+                - size 
+                - resolution_mode 
+                - quadratic_probe_c1 
+                - quadratic_probe_c2 
+                - multiplication_hash-a 
+                - hash_function_a 
+                - hash_function_b 
+                - threshold_mode 
+                - threshold_factor  
+                - load_factor 
+                - table 
+
+            Static Methods 
+                - init_cap(n)
+            
+            Utility Methods 
+                - map_hash_fn(idx) 
+                - setup_hash_fns() 
+                - make_container() 
+                - make_table(capacity)
+            
+            General Methods 
+                - threshold() 
+                - capacity()
+                - rehash()
+                - expand() 
+                - shrink() 
+
+            Open Addressing Fnctions 
+                - linear_probe(k, i) 
+                - quadratic_probe(k, i) 
+                - double_hashing(k, i) 
+
+            Hash Functions 
+                - division_hash(k) 
+                - multiplication_hash(k) 
+            
+            Main Operations 
+                - set_item(key, val)
+                - insert_item(key, val)
+                - update_item(key, val) 
+                - remove_item(key) 
+                - has_item(key)
+                - search(key)
+                - clear()
+
+            Utility Methods
+                - iterate(cb)
+                - report_container_frequencies()
+                - report_container_items() 
+                - display() 
+
+            Key/Value/Items Accessors 
+                - items() 
+                - keys() 
+                - values() 
+ ''' 
+
 from linked_lists.structs.sll import SLL
 import math 
 
@@ -30,8 +98,6 @@ MULTIPLICATION_METHOD = 5
 
 def log2(x):
     return x.bit_length() + 2
-
-
 
 class HashTable: 
     def __init__(self, init_cap = 2, **kwargs):
@@ -82,9 +148,17 @@ class HashTable:
         # main table 
         self.table = [self.make_container() for i in range(init_cap)]
 
+    #
+    # STATIC METHODS 
+    # 
+
     def init_cap(n): 
         x = math.ceil(log2(n))
         return 2 ** (x + 2)
+
+    #
+    # UTILITY METHODS 
+    # 
 
     def map_hash_fn(self, idx): 
         if idx == DIVISION_METHOD: 
@@ -95,17 +169,6 @@ class HashTable:
     def setup_hash_fns(self):      
         self.hash_fn_a = self.map_hash_fn(self.hash_function_a)
         self.hash_fn_b = self.map_hash_fn(self.hash_function_b)
-
-    def threshold(self):
-        tf = self.threshold_factor  
-        tm = self.threshold_mode 
-        if tm == "log":
-            return int(tf * log2(self.capacity()))
-        elif tm == "constant": 
-            return tf
-
-    def capacity(self):
-        return len(self.table)
 
     def make_container(self): 
         if self.resolution_mode == CHAINING_RESOLUTION: 
@@ -119,6 +182,21 @@ class HashTable:
             table.append(self.make_container())
         return table
 
+    # 
+    #  GENERAL METHODS
+    #
+    def threshold(self):
+        tf = self.threshold_factor  
+        tm = self.threshold_mode 
+        if tm == "log":
+            return int(tf * log2(self.capacity()))
+        elif tm == "constant": 
+            return tf
+
+    def capacity(self):
+        return len(self.table)
+
+    
     def rehash(self, aux): 
         # handle chaining resolution mode
         if self.resolution_mode == CHAINING_RESOLUTION:     
@@ -319,7 +397,7 @@ class HashTable:
         self.table = self.make_table(self.capacity()) 
         self.size = 0
 
-    def traverse(self, cb): 
+    def itereate(self, cb): 
         if self.resolution_mode == CHAINING_RESOLUTION: 
             i = 0 
             idx = 0
@@ -327,8 +405,7 @@ class HashTable:
                 current = container.head
                 j = 0
                 while current is not None: 
-                    res = cb(current.value, i, j, idx)
-                    if res: return res
+                    yield current.value, i, j, idx
                     current = current.next 
                     j += 1
                     idx += 1 
@@ -341,7 +418,7 @@ class HashTable:
             j = None
             for item in self.table: 
                 if item != None:
-                    cb(item, i, j, idx)
+                    yield item, i, j, idx
                     idx += 1
                 i += 1
 

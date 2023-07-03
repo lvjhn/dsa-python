@@ -1,27 +1,36 @@
 ''' 
-    KEYED FIBONACCI-HEAP IMPLEMENTATION (PYTHON)
-    (Modified Fibonacci-Heap with Custom Keys)
+    ################################################
+    # KEYED FIBONACCI-HEAP IMPLEMENTATION (PYTHON) #
+    ################################################
 
-    Notes: 
-		* isolated
-			- does not depend on third-party packages or other files 
-			- can be used as is
-        
+    NOTES 
+        * reference: rosettacode.org (modified implementation)
+		* does not require other files
         * printable / narrow width
 
-        * reference (slightly modified implementation)
-            - https://rosettacode.org/wiki/Fibonacci_heap
-
-		* implements common operations
+	API 
+        Utility Methods
             - comparator(a, b) 
             - swap_key_map(i, j)
-            - insert(key, value, data)
-            - insert_node(node)
-            - pop() 
             - consolidate() 
-            - update(key, new_value)
             - update_a(key, value)
             - update_b(key, value)  
+            - cut(x, y) 
+            - cascading_cut(y)
+            - update_a(key, value)
+            - update_b(key, value)
+            - display()
+            - display_tree(root, level)
+
+        Main Operations
+            - insert(key, value, data)
+            - insert_node(node)
+            - pop()
+            - delete(key) 
+
+        Accessors / Mutators
+            - update(key, new_value)
+            - delete(key)
             - keys()
             - values()
             - top()
@@ -32,7 +41,6 @@
             - set_value(key, value)
             - get_item(key) 
             - set_item(key, data) 
-            - display()
             - min() 
             - max() 
 ''' 
@@ -60,6 +68,10 @@ class KFH:
         self.type = type_
         self.key_no = 0 
         self.key_map = {} 
+
+    #
+    # UTILITY METHODS
+    #
     
     def comparator(self, a, b): 
         if self.type == "min": 
@@ -72,35 +84,6 @@ class KFH:
         arr = self.items
         self.key_map[arr[i].key] = j
         self.key_map[arr[j].key] = i
-
-    def insert(self, key, value, data = None):
-        node = KFH_Item(key, value, data)
-        self.insert_node(node)  
-
-    def insert_node(self, node):
-        self.children.append(node)
-        self.key_map[node.key] = node 
-        if self.min_node is None or self.comparator(node, self.min_node): 
-            self.min_node = node 
-
-        self.count += 1 
-
-    def pop(self):
-        smallest = self.min_node 
-        del self.key_map[smallest.key]
-
-        if smallest is not None: 
-            for child in smallest.children: 
-                self.children.append(child) 
-            self.children.remove(smallest) 
-            if self.children == []:
-                self.min_node = None 
-            else: 
-                self.min_node = self.children[0]
-                self.consolidate() 
-            self.count -= 1
-            return smallest.key 
-        return None 
 
     def consolidate(self): 
         aux = math.floor(math.log2(self.count) + 1) * [None] 
@@ -126,20 +109,7 @@ class KFH:
                 self.children.append(k) 
                 if self.min_node is None or self.comparator(k, self.min_node): 
                     self.min_node = k 
-
-    def update(self, key, new_value): 
-        if key not in self.key_map: 
-            raise Exception(f"{key} is not in list.")
-        item = self.key_map[key] 
-        
-        aux = KFH_Item(key, new_value, None)
-        item = self.key_map[key]
-
-        if self.comparator(aux, item): 
-            self.update_a(key, new_value)
-        else:   
-            self.update_b(key, new_value)
-
+    
     def update_a(self, key, value): 
         x = self.get_item(key)
         x.value = value 
@@ -159,17 +129,6 @@ class KFH:
         # reinsert item with new value to the heap 
         self.insert(key, value, x.data)
 
-    def delete(self, key): 
-        del_val = None
-        
-        if self.type == "min": 
-            del_val = float("-inf") 
-        elif self.type == "max":  
-            del_val = float("inf") 
-
-        self.update_a(key, del_val)
-        self.pop()   
-
     def cut(self, x, y): 
         y.children.remove(x) 
         y.order -= 1
@@ -185,6 +144,80 @@ class KFH:
             else: 
                 self.cut(y, z) 
                 self.cascading_cut(z)
+
+    def display(self):
+        self.display_tree(self) 
+    
+    def display_tree(self, root, level = 0):
+        if root is None: 
+            return 
+
+        for current in root.children: 
+            print(f"{'    ' * level} {current.key} -> " + \
+                  f"{current.value} {current.order}")
+            self.display_tree(current, level + 1)  
+
+    #
+    # MAIN OPERATIONS 
+    # 
+
+    def insert(self, key, value, data = None):
+        node = KFH_Item(key, value, data)
+        self.insert_node(node)  
+
+    def insert_node(self, node):
+        self.children.append(node)
+        self.key_map[node.key] = node 
+        if self.min_node is None or \
+           self.comparator(node, self.min_node): 
+            self.min_node = node 
+
+        self.count += 1 
+
+    def pop(self):
+        smallest = self.min_node 
+        del self.key_map[smallest.key]
+
+        if smallest is not None: 
+            for child in smallest.children: 
+                self.children.append(child) 
+            self.children.remove(smallest) 
+            if self.children == []:
+                self.min_node = None 
+            else: 
+                self.min_node = self.children[0]
+                self.consolidate() 
+            self.count -= 1
+            return smallest.key 
+        return None 
+
+    def delete(self, key): 
+        del_val = None
+        
+        if self.type == "min": 
+            del_val = float("-inf") 
+        elif self.type == "max":  
+            del_val = float("inf") 
+
+        self.update_a(key, del_val)
+        self.pop()   
+
+    #
+    # ACCESSORS / MUTATORS
+    # 
+
+    def update(self, key, new_value): 
+        if key not in self.key_map: 
+            raise Exception(f"{key} is not in list.")
+        item = self.key_map[key] 
+        
+        aux = KFH_Item(key, new_value, None)
+        item = self.key_map[key]
+
+        if self.comparator(aux, item): 
+            self.update_a(key, new_value)
+        else:   
+            self.update_b(key, new_value)
 
     def items(self):
         for key in self.key_map: 
@@ -222,16 +255,6 @@ class KFH:
     def set_item(self, key, item): 
         self.key_map[key] = item
     
-    def display(self):
-        self.display_tree(self) 
-    
-    def display_tree(self, root, level = 0):
-        if root is None: 
-            return 
-
-        for current in root.children: 
-            print(f"{'    ' * level} {current.key} -> {current.value} {current.order}")
-            self.display_tree(current, level + 1)  
 
     def min(self): 
         if self.type != "min":

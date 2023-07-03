@@ -8,41 +8,52 @@
         * printable / narrow width
 
 	API		
-        Location Operations
-            - at(index) 
-            - search(value) 
-            - search_node(node) 
-            - index(value)
-            - node_index(node) 
-        
-        Insertion Operations
-            - insert(pos, value) 
-            - insert_node(pos, node) 
-            - prepend(value) 
-            - prepend_node(node) 
-            - append(value) 
-            - append_node(value) 
-            - insert_after(node, value) 
-            - insert_node_after(node, new_node) 
-            - insert_before(node, value) 
-            - insert_node_before(node, new_node) 
-                
-        Deletion Operations 
-            - delete(pos) 
-            - delete_node(node)
-            - delete_head() 
-            - delete_tail() 
-            - delete_after(node) 
-            - delete_before(node)
-            - remove(value) 
+        CSLL_Node 
+            Properties
+                - value 
+                - next
 
-        Utility Functions 
-            - predecessor(node) 
-            - successor(node)
-            - prepredecessor(node)
-            - postsucessor(node)
-            - size()
-            - iterate()
+        CSLL
+            Properties 
+                - head 
+                - tail 
+                - count
+
+            Location Operations
+                - at(index) 
+                - search(value) 
+                - search_node(node) 
+                - index(value)
+                - node_index(node) 
+            
+            Insertion Operations
+                - insert(pos, value) 
+                - insert_node(pos, node) 
+                - prepend(value) 
+                - prepend_node(node) 
+                - append(value) 
+                - append_node(value) 
+                - insert_after(node, value) 
+                - insert_node_after(node, new_node) 
+                - insert_before(node, value) 
+                - insert_node_before(node, new_node) 
+                    
+            Deletion Operations 
+                - delete(pos) 
+                - delete_node(node)
+                - delete_head() 
+                - delete_tail() 
+                - delete_after(node) 
+                - delete_before(node)
+                - remove(value) 
+
+            Utility Functions 
+                - predecessor(node) 
+                - successor(node)
+                - prepredecessor(node)
+                - postsucessor(node)
+                - size()
+                - iterate()
 
 """
 

@@ -1,6 +1,26 @@
 """ 
-    DOUBLE-ENDED PRIORITY QUEUE IMPLEMENTATION 
-    (Uses BSTH) 
+    ##############################################
+    # DOUBLE-ENDED PRIORITY QUEUE IMPLEMENTATION #
+    ##############################################
+
+    NOTES 
+		* min-max heap based 
+		* requires min-max heap (same project)
+		* printable / narrow width
+
+	API 
+		PriorityQueue 
+			- comparator() 
+            - min() 
+            - max() 
+            - front() 
+            - back() 
+            - enqueue(self, key, priority, data = None) 
+            - dequeue_front(self) 
+            - dequeue_back(self)
+            - size() 
+            - display() 
+
 """ 
 from heaps.structs.kmmh import KMMH
 
@@ -47,8 +67,9 @@ class PriorityQueue:
     def dequeue_back(self): 
         return self.items.pop_max()
 
-    def length(self): 
+    def size(self): 
         return self.items.size()
 
     def display(self): 
         return self.items.display()
+
