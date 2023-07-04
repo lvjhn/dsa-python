@@ -29,8 +29,11 @@ class PriorityQueue:
         self.items = KMMH()  
         self.type = type_
 
-        def comparator(a, b): 
-            return self.comparator(a, b)
+        def comparator(a, b):                 
+            if self.type == "min":
+                return self.comparator(a, b)
+            else: 
+                return not self.comparator(a, b)
 
         self.items.comparator = comparator
 
@@ -54,9 +57,9 @@ class PriorityQueue:
 
     def back(self): 
         if self.type == "min": 
-            return self.type.max()
+            return self.max()
         elif self.type == "max": 
-            return self.type.min()
+            return self.min()
 
     def enqueue(self, key, priority, data = None): 
         return self.items.insert(key, priority, data)

@@ -88,7 +88,10 @@ class KMMH:
     #  
 
     def comparator(self, a, b):
-        return a.value < b.value
+        if a.value == b.value: 
+            return a.key < b.key 
+        else: 
+            return a.value < b.value
       
     def keyfy(self, items): 
         if type(items) is list: 
@@ -379,19 +382,23 @@ class KMMH:
         if len(self.items) == 1: 
             self.items = [] 
             return 
-
-        i = None
-        if self.items[1].value >= self.items[2].value: 
-            i = 1 
-        else: 
-            i = 2 
+        elif len(self.items) == 2: 
+            i = 1
+        elif len(self.items) > 2:
+            i = None
+            a = self.items[1]
+            b = self.items[2]
+            if not self.comparator(a, b): 
+                i = 1 
+            else: 
+                i = 2 
         
         arr = self.items 
         n = len(arr)
         l = n - 1 
 
         item = arr[i]
-        del self.key_map[arr[i].key]
+        del self.key_map[item.key]
         self.key_map[arr[l].key] = 0
         arr[i] = arr[l]
 
@@ -446,7 +453,9 @@ class KMMH:
         elif self.size() == 2: 
             return self.items[1] 
         else: 
-            if self.items[1].value >= self.items[2].value: 
+            a = self.items[1]
+            b = self.items[2]
+            if not self.comparator(a, b):
                 return self.items[1] 
             else: 
                 return self.items[2]
@@ -483,7 +492,6 @@ class KMMH:
 
     def set_item(self, key, item): 
         self.key_map[key] = item
-
 
     def size(self): 
         return len(self.items)

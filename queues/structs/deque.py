@@ -48,4 +48,4 @@ class Deque:
         return back     
 
     def size(self): 
-        return self.items.size 
+        return self.items.size()
