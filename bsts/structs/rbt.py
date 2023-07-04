@@ -31,6 +31,8 @@
                 - update_height(node)
                 - find(key, root)
                 - transplant(u, v)
+                - rebalance_insert(k)
+                - rebalance_delete(k)
                 - display() 
                 - display_node(root, indent, orient) 
 
@@ -43,10 +45,8 @@
             Main Operations 
                 - insert(key, value) 
                 - insert_node(root, node, parent) 
-                - rebalance_insert(k)
                 - delete(key) 
                 - delete_node(root, key)
-                - rebalance_delete(k)
 """ 
 
 
@@ -124,6 +124,92 @@ class RBT():
         else:
             u.parent.right = v
         v.parent = u.parent
+    
+    def rebalance_insert(self, k):
+        while k.parent.color == 1:
+            if k.parent == k.parent.parent.right:
+                u = k.parent.parent.left
+                if u.color == 1:
+                    u.color = 0
+                    k.parent.color = 0
+                    k.parent.parent.color = 1
+                    k = k.parent.parent
+                else:
+                    if k == k.parent.left:
+                        k = k.parent
+                        self.right_rotate(k)
+                    k.parent.color = 0
+                    k.parent.parent.color = 1
+                    self.left_rotate(k.parent.parent)
+            else:
+                u = k.parent.parent.right
+
+                if u.color == 1:
+                    u.color = 0
+                    k.parent.color = 0
+                    k.parent.parent.color = 1
+                    k = k.parent.parent
+                else:
+                    if k == k.parent.right:
+                        k = k.parent
+                        self.left_rotate(k)
+                    k.parent.color = 0
+                    k.parent.parent.color = 1
+                    self.right_rotate(k.parent.parent)
+            if k == self.root:
+                break
+        self.root.color = 0
+
+    
+    def rebalance_delete(self, x):
+        while x != self.root and x.color == 0:
+            if x == x.parent.left:
+                s = x.parent.right
+                if s.color == 1:
+                    s.color = 0
+                    x.parent.color = 1
+                    self.left_rotate(x.parent)
+                    s = x.parent.right
+
+                if s.left.color == 0 and s.right.color == 0:
+                    s.color = 1
+                    x = x.parent
+                else:
+                    if s.right.color == 0:
+                        s.left.color = 0
+                        s.color = 1
+                        self.right_rotate(s)
+                        s = x.parent.right
+
+                    s.color = x.parent.color
+                    x.parent.color = 0
+                    s.right.color = 0
+                    self.left_rotate(x.parent)
+                    x = self.root
+            else:
+                s = x.parent.left
+                if s.color == 1:
+                    s.color = 0
+                    x.parent.color = 1
+                    self.right_rotate(x.parent)
+                    s = x.parent.left
+
+                if s.right.color == 0 and s.left.color == 0:
+                    s.color = 1
+                    x = x.parent
+                else:
+                    if s.left.color == 0:
+                        s.right.color = 0
+                        s.color = 1
+                        self.left_rotate(s)
+                        s = x.parent.left
+
+                    s.color = x.parent.color
+                    x.parent.color = 0
+                    s.left.color = 0
+                    self.right_rotate(x.parent)
+                    x = self.root
+        x.color = 0
 
     def display(self): 
         self.display_node(self.root, 0, "root")
@@ -229,41 +315,6 @@ class RBT():
         return node
         
 
-    def rebalance_insert(self, k):
-        while k.parent.color == 1:
-            if k.parent == k.parent.parent.right:
-                u = k.parent.parent.left
-                if u.color == 1:
-                    u.color = 0
-                    k.parent.color = 0
-                    k.parent.parent.color = 1
-                    k = k.parent.parent
-                else:
-                    if k == k.parent.left:
-                        k = k.parent
-                        self.right_rotate(k)
-                    k.parent.color = 0
-                    k.parent.parent.color = 1
-                    self.left_rotate(k.parent.parent)
-            else:
-                u = k.parent.parent.right
-
-                if u.color == 1:
-                    u.color = 0
-                    k.parent.color = 0
-                    k.parent.parent.color = 1
-                    k = k.parent.parent
-                else:
-                    if k == k.parent.right:
-                        k = k.parent
-                        self.left_rotate(k)
-                    k.parent.color = 0
-                    k.parent.parent.color = 1
-                    self.right_rotate(k.parent.parent)
-            if k == self.root:
-                break
-        self.root.color = 0
-
     def delete(self, key): 
         self.delete_key(self.root, key)
         self.count -= 1
@@ -315,56 +366,3 @@ class RBT():
 
         if y_original_color == 0:
             self.rebalance_delete(x)
-
-    def rebalance_delete(self, x):
-        while x != self.root and x.color == 0:
-            if x == x.parent.left:
-                s = x.parent.right
-                if s.color == 1:
-                    s.color = 0
-                    x.parent.color = 1
-                    self.left_rotate(x.parent)
-                    s = x.parent.right
-
-                if s.left.color == 0 and s.right.color == 0:
-                    s.color = 1
-                    x = x.parent
-                else:
-                    if s.right.color == 0:
-                        s.left.color = 0
-                        s.color = 1
-                        self.right_rotate(s)
-                        s = x.parent.right
-
-                    s.color = x.parent.color
-                    x.parent.color = 0
-                    s.right.color = 0
-                    self.left_rotate(x.parent)
-                    x = self.root
-            else:
-                s = x.parent.left
-                if s.color == 1:
-                    s.color = 0
-                    x.parent.color = 1
-                    self.right_rotate(x.parent)
-                    s = x.parent.left
-
-                if s.right.color == 0 and s.left.color == 0:
-                    s.color = 1
-                    x = x.parent
-                else:
-                    if s.left.color == 0:
-                        s.right.color = 0
-                        s.color = 1
-                        self.left_rotate(s)
-                        s = x.parent.left
-
-                    s.color = x.parent.color
-                    x.parent.color = 0
-                    s.left.color = 0
-                    self.right_rotate(x.parent)
-                    x = self.root
-        x.color = 0
-
-    
-
