@@ -38,6 +38,7 @@
                 - rehash()
                 - expand() 
                 - shrink() 
+                - size
 
             Open Addressing Fnctions 
                 - linear_probe(k, i) 
@@ -54,6 +55,7 @@
                 - update_item(key, val) 
                 - remove_item(key) 
                 - has_item(key)
+                - get_item(key)
                 - search(key)
                 - clear()
 
@@ -62,6 +64,7 @@
                 - report_container_frequencies()
                 - report_container_items() 
                 - display() 
+                - size()
 
             Key/Value/Items Accessors 
                 - items() 
@@ -80,17 +83,15 @@ import math
 CHAINING_RESOLUTION = 1 
 LINEAR_PROBING_RESOLUTION = 2 
 QUADRATIC_PROBING_RESOLUTION = 3 
-DOUBLE_HASHING_RESOLUTION = 4 
 
 OPEN_ADDRESSING_MODES = [
     LINEAR_PROBING_RESOLUTION,
-    QUADRATIC_PROBING_RESOLUTION, 
-    DOUBLE_HASHING_RESOLUTION
+    QUADRATIC_PROBING_RESOLUTION 
 ]
 
 # --- HASH FUNCTIONS --- # 
 DIVISION_METHOD = 4
-MULTIPLICATION_METHOD = 5  
+MULTIPLICATION_METHOD = 5
 
 #####################
 # UTILITY FUNCTIONS #
@@ -103,7 +104,7 @@ class HashTable:
     def __init__(self, init_cap = 2, **kwargs):
         
         # meta config
-        self.size = 0
+        self.count = 0
         self.resolution_mode = \
             kwargs.get("resolution_mode", CHAINING_RESOLUTION) 
 
@@ -226,7 +227,6 @@ class HashTable:
         self.rehash(aux)
 
     def shrink(self): 
-        print(f"Should shrink from {self.capacity()}")
         # make an auxiliary hash table 
         aux = HashTable(
             self.capacity() // 2, 
@@ -258,12 +258,6 @@ class HashTable:
         c2 = self.quadratic_probe_c2
         return int((hf(k) + (c1 * i) + (c2 * (i << 1))) % m)
 
-    def double_hashing(self, k, i):
-        m = self.capacity()  
-        hf1 = self.hash_fn_a 
-        hf2 = self.hash_fn_b 
-        return int((hf1(k) + i * hf2(k)) % m)
-
     # --- Hash Functions --- # 
     def division_hash(self, k):
         k = int(k)
@@ -291,10 +285,10 @@ class HashTable:
             container = self.table[index] 
             container.append([key, val])
 
-            self.size += 1
+            self.count += 1
 
             # expand when container size reach threshold
-            if container.size >= self.threshold(): 
+            if container.count >= self.threshold(): 
                 self.expand()
 
         elif self.resolution_mode in OPEN_ADDRESSING_MODES: 
@@ -309,11 +303,11 @@ class HashTable:
                     break 
                 i += 1
 
-            self.table[index] = (key, val) 
-            self.size += 1 
+            self.table[index] = [key, val] 
+            self.count += 1 
 
             # expand when list reaches maximum capacity
-            if self.size >= self.capacity() * self.load_factor:
+            if self.count >= self.capacity() * self.load_factor:
                 self.expand()  
 
         else: 
@@ -343,7 +337,7 @@ class HashTable:
                 self.table[search[1]] = None
             
             
-            self.size -= 1
+            self.count -= 1
 
             # attempt to shrink  hash table
             threshold = None
@@ -351,9 +345,9 @@ class HashTable:
             if self.resolution_mode == CHAINING_RESOLUTION: 
                 threshold = (self.capacity() * self.threshold()) // 2
             elif self.resolution_mode in OPEN_ADDRESSING_MODES: 
-                threshold = self.capacity() * self.load_factor() 
+                threshold = self.capacity() * self.load_factor 
 
-            if self.size < self.threshold(): 
+            if self.count < self.threshold(): 
                 self.shrink()
 
 
@@ -362,6 +356,13 @@ class HashTable:
             return True 
         else: 
             return False 
+
+    def get_item(self, key): 
+        s = self.search(key)
+        if s == None: 
+            return None 
+        else: 
+            return s[0][1]
 
     def search(self, key): 
         if self.resolution_mode == CHAINING_RESOLUTION: 
@@ -395,9 +396,9 @@ class HashTable:
 
     def clear(self):
         self.table = self.make_table(self.capacity()) 
-        self.size = 0
+        self.count = 0
 
-    def itereate(self, cb): 
+    def iterate(self, cb): 
         if self.resolution_mode == CHAINING_RESOLUTION: 
             i = 0 
             idx = 0
@@ -438,6 +439,9 @@ class HashTable:
             lambda item, i, j, idx: 
                 print(str(item).ljust(20), i, j, idx)
         )
+            
+    def size(self): 
+        return self.count
 
     # --- KEY/VALUE/ITEM ACCESSORS --- # 
 
@@ -463,4 +467,3 @@ class HashTable:
     def values(self):
         for item in self.items(): 
             yield item[1]
-        
