@@ -29,7 +29,7 @@
                 - find_min(root)  
                 - find_max(root) 
                 - find(key, root)
-                - update_height(node)
+s                - update_height(node)
                 - display() 
                 - display_node(root, indent, orient)
             
@@ -44,6 +44,7 @@
                 - insert_node(root, node, parent) 
                 - delete(key) 
                 - delete_node(root, key)
+                - clear()
 
 """ 
 
@@ -80,17 +81,6 @@ class AVLT:
             return 0    
         return self.get_height(root.left) - self.get_height(root.right) 
 
-    def find_min(self, root): 
-        if root is None: 
-            return None 
-
-        if root.left is None and root.right is None: 
-            return root 
-        elif root.left is None and root.right is not None: 
-            return root 
-
-        return self.find_min(root.left)
-
     def find(self, key, root = None): 
         if self.root is None: 
             return None 
@@ -109,6 +99,17 @@ class AVLT:
                 return current 
         return None
 
+    def find_min(self, root): 
+        if root is None: 
+            return None 
+
+        if root.left is None and root.right is None: 
+            return root 
+        elif root.left is None and root.right is not None: 
+            return root 
+
+        return self.find_min(root.left)
+
     def find_max(self, root): 
         if root is None: 
             return None 
@@ -119,6 +120,7 @@ class AVLT:
             return root 
 
         return self.find_max(root.right)
+
 
     
     def update_height(self, node): 
@@ -142,8 +144,23 @@ class AVLT:
         
         self.display_node(root.left, indent + 1, "left")
         self.display_node(root.right, indent + 1, "right")
+    
+    def iterate(self): 
+        def inorder(node):
+            if node.left: 
+                yield from inorder(node.left) 
+            yield node
+            if node.right:
+                yield from inorder(node.right)             
+        return inorder(self.root)
 
+    def keys(self): 
+        for item in self.iterate(): 
+            yield item.key
 
+    def values(self): 
+        for item in self.iterate(): 
+            yield item.value 
     #
     # ROTATION METHODS
     #
@@ -253,7 +270,7 @@ class AVLT:
         return root
 
     def delete(self, key): 
-        self.delete_key(self.root, key)
+        self.delete_node(self.root, key)
         self.count -= 1
 
     def delete_node(self, root, key):
@@ -311,4 +328,6 @@ class AVLT:
 
         return root 
 
-    
+    def clear(self): 
+        self.root = None 
+        self.count = 0

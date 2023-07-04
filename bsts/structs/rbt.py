@@ -47,6 +47,7 @@
                 - insert_node(root, node, parent) 
                 - delete(key) 
                 - delete_node(root, key)
+                - clear()
 """ 
 
 
@@ -77,6 +78,22 @@ class RBT():
     def size(self): 
         return self.count 
 
+    def find(self, key, root = None): 
+        if root is None: 
+            current = self.root 
+        else: 
+            current = root 
+
+        while current is not self.TNULL: 
+            if key < current.key:
+                current = current.left
+            elif key > current.key: 
+                current = current.right
+            else: 
+                return current 
+                
+        return None
+
     def find_min(self, root): 
         if root is self.TNULL: 
             return None 
@@ -98,24 +115,7 @@ class RBT():
             return root 
 
         return self.find_max(root.right)
-
-
-    def find(self, key, root = None): 
-        if root is None: 
-            current = self.root 
-        else: 
-            current = root 
-
-        while current is not self.TNULL: 
-            if key < current.key:
-                current = current.left
-            elif key > current.key: 
-                current = current.right
-            else: 
-                return current 
-                
-        return None
-
+      
     def transplant(self, u, v):
         if u.parent == None:
             self.root = v
@@ -366,3 +366,9 @@ class RBT():
 
         if y_original_color == 0:
             self.rebalance_delete(x)
+
+    def clear(self): 
+        self.root = None 
+        self.count = 0  
+
+    
