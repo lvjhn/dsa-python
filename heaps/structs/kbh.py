@@ -36,8 +36,9 @@
                 - heapify_up(items, keyfy) 
                 - heapify_down(items, keyfy) 
                 - insert(key, value, data)
-s                - pop() 
+s               - pop() 
                 - delete(key)
+                - clear() 
 
             Accessors / Mutators  
                 - update(key, new_value)
@@ -53,6 +54,10 @@ s                - pop()
                 - set_item(key, data) 
                 - min() 
                 - max() 
+                - min_key() 
+                - max_key()
+                - min_value() 
+                - max_value() 
 
 ''' 
 
@@ -217,6 +222,9 @@ class KBH:
         self.update(key, rem_val) 
         self.pop()
 
+    def clear(self):
+        self.items = []
+
     #
     # ACCESSORS / MUTATORS
     # 
@@ -256,32 +264,44 @@ class KBH:
         return len(self.items)
 
     def get_data(self, key): 
-        return self.key_map[key].data
+        return self.get_item(key).data
 
     def set_data(self, key, data): 
-        self.key_map[key].data = data
+        self.get_item(key).data = data
 
     def get_value(self, key): 
         return self.get_item(key).value 
 
     def set_value(self, key, value): 
-        self.key_map[key].value = value
+        self.get_item(key).value = value
 
     def get_item(self, key): 
-        return self.key_map[key] 
+        return self.items[self.key_map[key]]
 
     def set_item(self, key, item): 
-        self.key_map[key] = item
+        self.items[self.key_map[key]] = item
 
     def min(self): 
         if self.type != "min":
             raise Exception("Not a minimum heap.") 
-        return self.top().value 
+        return self.top() 
 
     def max(self): 
         if self.type != "max": 
             raise Exception("Not a maximum heap.") 
-        return self.top().value 
+        return self.top() 
+
+    def min_key(self): 
+        return self.min().key 
+    
+    def min_value(self): 
+        return self.min().value 
+
+    def max_key(self): 
+        return self.max().key 
+
+    def max_value(self) :
+        return self.max().value
 
     def size(self): 
         return len(self.items)

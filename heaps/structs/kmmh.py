@@ -51,6 +51,7 @@
                 - pop_min()  
                 - pop_max()
                 - delete(key)
+                - clear()
 
             Accessors / Mutators  
                 - update(key, new_value)
@@ -416,6 +417,9 @@ class KMMH:
         self.push_up(arr, i)
         self.pop_min()
 
+    def clear(self): 
+        self.items = []
+
     #
     # ACCESSORS / MUTATORS
     # 
@@ -476,19 +480,19 @@ class KMMH:
         return len(self.items)
 
     def get_data(self, key): 
-        return self.key_map[key].data
+        return self.get_item(key).data
 
     def set_data(self, key, data): 
-        self.key_map[key].data = data
+        self.get_item(key).data = data
 
     def get_value(self, key): 
         return self.get_item(key).value 
 
     def set_value(self, key, value): 
-        self.key_map[key].value = value
+        self.get_item(key).value = value
 
     def get_item(self, key): 
-        return self.key_map[key] 
+        return self.items[self.key_map[key]]
 
     def set_item(self, key, item): 
         self.key_map[key] = item

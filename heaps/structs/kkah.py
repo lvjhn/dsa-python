@@ -41,6 +41,7 @@
                 - insert_node(node)
                 - pop() 
                 - delete(key)
+                - clear()
 
             Accessors / Mutators  
                 - update(key, new_value)
@@ -72,6 +73,7 @@ class KKAH:
         self.key_map = {}  
         self.degree = 3 
         self.type = type_
+        self.key_no = 0
 
     #
     # UTILITY METHODS
@@ -117,7 +119,7 @@ class KKAH:
     def keyfy(self, items): 
         if type(items) is list: 
             for i in range(len(items)): 
-                items[i] = KBH_Item(self.key_no, items[i])
+                items[i] = KKAH_Item(self.key_no, items[i], None)
                 self.key_map[items[i].key] = i
                 self.key_no += 1 
             return items
@@ -126,7 +128,7 @@ class KKAH:
             new_items = []
             for key in items: 
                 value = items[key]
-                new_items.append(KBH_Item(key, value))
+                new_items.append(KKAH_Item(key, value, None))
                 self.key_map[key] = i
                 self.key_no += 1 
                 i += 1
@@ -196,7 +198,7 @@ class KKAH:
 
         for i in range(n // d - 1, -1, -1): 
             j = i 
-            self.bubble_down(key, value, data)   
+            self.bubble_down(arr, j)   
 
     def insert(self, key, value, data = None): 
         item = KKAH_Item(key, value, data)
@@ -233,6 +235,9 @@ class KKAH:
         rem_val = float('-inf') if self.type == "min" else float("inf")
         self.update(key, rem_val) 
         self.pop()
+
+    def clear(self): 
+        self.items = []
 
     #
     # ACCESSORS / MUTATORS
@@ -271,32 +276,44 @@ class KKAH:
         return len(self.items)
 
     def get_data(self, key): 
-        return self.key_map[key].data
+        return self.get_item(key).data
 
     def set_data(self, key, data): 
-        self.key_map[key].data = data
+        self.get_item(key).data = data
 
     def get_value(self, key): 
         return self.get_item(key).value 
 
     def set_value(self, key, value): 
-        self.key_map[key].value = value
+        self.get_item(key).value = value
 
     def get_item(self, key): 
-        return self.key_map[key] 
+        return self.items[self.key_map[key]]
 
     def set_item(self, key, item): 
-        self.key_map[key] = item
+        self.items[self.key_map[key]] = item
 
     def min(self): 
         if self.type != "min":
             raise Exception("Not a minimum heap.") 
-        return self.top().value 
+        return self.top() 
 
     def max(self): 
         if self.type != "max": 
             raise Exception("Not a maximum heap.") 
-        return self.top().value 
+        return self.top() 
+
+    def min_key(self): 
+        return self.min().key 
+    
+    def min_value(self): 
+        return self.min().value 
+
+    def max_key(self): 
+        return self.max().key 
+
+    def max_value(self) :
+        return self.max().value
 
     def size(self): 
         return len(self.items)

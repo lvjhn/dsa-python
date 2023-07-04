@@ -27,6 +27,7 @@
             - insert_node(node)
             - pop()
             - delete(key) 
+            - clear()
 
         Accessors / Mutators
             - update(key, new_value)
@@ -43,6 +44,10 @@
             - set_item(key, data) 
             - min() 
             - max() 
+            - min_key() 
+            - max_key()
+            - min_value() 
+            - max_value()
 ''' 
 import math 
 
@@ -202,6 +207,11 @@ class KFH:
         self.update_a(key, del_val)
         self.pop()   
 
+    def clear(self): 
+        self.min_node = None 
+        self.children = [] 
+        self.count = 0
+
     #
     # ACCESSORS / MUTATORS
     # 
@@ -255,16 +265,27 @@ class KFH:
     def set_item(self, key, item): 
         self.key_map[key] = item
     
-
     def min(self): 
         if self.type != "min":
             raise Exception("Not a minimum heap.") 
-        return self.top().value 
+        return self.top() 
 
     def max(self): 
         if self.type != "max": 
             raise Exception("Not a maximum heap.") 
-        return self.top().value 
+        return self.top() 
+
+    def min_key(self): 
+        return self.min().key 
+
+    def min_value(self): 
+        return self.min().value
+    
+    def max_key(self): 
+        return self.max().key 
+
+    def max_value(self): 
+        return self.max().value
 
     def size(self): 
         return self.count
