@@ -1,9 +1,9 @@
-from .structs.avlt import AVLT, AVLT_Node
+from .structs.rbt import RBT, RBT_Node
 
 print(f"# DEMO OF AVL TREE ADT #")
 
 # create stack
-bst = AVLT() 
+bst = RBT() 
 
 # display initial Tree size 
 print(f"> Tree Size: {bst.size()}")
@@ -37,7 +37,7 @@ print()
 print(f"Finding 50: {bst.find(50)}")
 print(f"Finding -1: {bst.find(-1)}")
 print()
-assert(type(bst.find(50)) is AVLT_Node) 
+assert(type(bst.find(50)) is RBT_Node) 
 assert(bst.find(-1) is None)
 
 # delete items 

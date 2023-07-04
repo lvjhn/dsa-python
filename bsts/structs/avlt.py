@@ -29,7 +29,7 @@
                 - find_min(root)  
                 - find_max(root) 
                 - find(key, root)
-s                - update_height(node)
+                - update_height(node)
                 - display() 
                 - display_node(root, indent, orient)
             
@@ -45,6 +45,7 @@ s                - update_height(node)
                 - delete(key) 
                 - delete_node(root, key)
                 - clear()
+                - update(key, value)
 
 """ 
 
@@ -192,7 +193,7 @@ class AVLT:
 
         return y
 
-    def right_rotate(self, a): 
+    def right_rotate(self, x): 
         y = x.left
         x.left = y.right
 
@@ -284,26 +285,35 @@ class AVLT:
         else:
             if root.left is None:
                 temp = root.right
-                root = None
+                root = None 
                 return temp
             
             elif root.right is None:
                 temp = root.left
                 root = None
                 return temp
-           
+
+            elif root.left is None and root.right is None: 
+                if root.parent.left is root: 
+                    root.parent.left = None 
+                else: 
+                    root.parent.right = None         
+                return   
             else:
                 temp = self.find_min(root.right)
-                temp.left = root.left
-                temp.right = self.delete_node(root.right,temp.key)
+                temp.right = self.delete_node(root.right, temp.key)
+                temp.left = root.left 
 
-            if root is self.root: 
-                self.root = temp
-            else: 
-                if root.parent.left is root: 
-                    root.parent.left = temp 
+                if root is self.root: 
+                    self.root = temp
                 else: 
-                    root.parent.right = temp
+                    if root.parent.left is root: 
+                        root.parent.left = temp 
+                    else: 
+                        root.parent.right = temp
+                    temp.parent = root.parent 
+
+                root = temp
         
         if root is None:
             return root
@@ -312,22 +322,28 @@ class AVLT:
         root.height = 1 + max(self.get_height(root.left),
                               self.get_height(root.right))
 
-        bf = self.get_balance_factor(root)
+        # bf = self.get_balance_factor(root)
 
-        # balance the tree
-        if bf > 1:
-            if self.get_balance_factor(root.left) >= 0:
-                return self.right_rotate(root)
-            else:
-                return self.left_right_rotate(root)
-        if bf < -1:
-            if self.get_balance_factor(root.right) <= 0:
-                return self.left_rotate(root)
-            else:
-                return self.right_left_rotate(root)
+        # # balance the tree
+        # if bf > 1:
+        #     if self.get_balance_factor(root.left) >= 0:
+        #         return self.right_rotate(root)
+        #     else:
+        #         return self.left_right_rotate(root)
+        # if bf < -1:
+        #     if self.get_balance_factor(root.right) <= 0:
+        #         return self.left_rotate(root)
+        #     else:
+        #         return self.right_left_rotate(root)
 
         return root 
 
     def clear(self): 
         self.root = None 
         self.count = 0
+
+    def update(self, key, value): 
+        if self.find(key) is None:
+            raise Exception(f"{key} is not in tree.")
+        self.delete(key)
+        self.insert(key, value)

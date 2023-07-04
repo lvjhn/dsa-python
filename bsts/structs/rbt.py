@@ -48,6 +48,7 @@
                 - delete(key) 
                 - delete_node(root, key)
                 - clear()
+                - update(key, value)
 """ 
 
 
@@ -227,7 +228,23 @@ class RBT():
         
         self.display_node(root.left, indent + 1, "left")
         self.display_node(root.right, indent + 1, "right")
+    
+    def iterate(self): 
+        def inorder(node):
+            if node.left is not self.TNULL: 
+                yield from inorder(node.left) 
+            yield node
+            if node.right is not self.TNULL:
+                yield from inorder(node.right)             
+        return inorder(self.root)
 
+    def keys(self): 
+        for item in self.iterate(): 
+            yield item.key
+
+    def values(self): 
+        for item in self.iterate(): 
+            yield item.value 
 
     #
     # ROTATION METHODS
@@ -285,7 +302,7 @@ class RBT():
 
     def insert_node(self, node): 
         y = None
-        x = root
+        x = self.root
 
         while x != self.TNULL:
             y = x
@@ -371,4 +388,8 @@ class RBT():
         self.root = None 
         self.count = 0  
 
-    
+    def update(self, key, value): 
+        if self.find(key) is None:
+            raise Exception(f"{key} is not in tree.")
+        self.delete(key)
+        self.insert(key, value)
