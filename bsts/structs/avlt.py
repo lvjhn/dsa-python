@@ -83,7 +83,8 @@ class AVLT_Node():
         self.left = None 
         self.right = None
 
-        self.leaf = False 
+        self.next = None 
+        self.prev = None 
 
 class AVLT: 
     def __init__(self, **kwargs): 
@@ -135,7 +136,7 @@ class AVLT:
 
         key_node = AVLT_Node(key, None)
 
-        while current.leaf: 
+        while current is not None: 
             if current.left: 
                 mid = lo + current.left.n_desc
             elif current.right: 
@@ -308,53 +309,59 @@ class AVLT:
         node = self.find(key)
         return self.prev(node)
 
-    def prev(self, node):   
-        if self.size() == 1: 
-            return None
+    def prev(self, node): 
+        pass 
 
-        if node.left is not None:  
-            return self.find_max(node.left)
+    # def prev(self, node):   
+    #     if self.size() == 1: 
+    #         return None
 
-        if node.left is None: 
-            if node.parent.right is node: 
-                return node.parent   
-            else: 
-                current = node.parent
-                while True and current.parent is not None: 
-                    if current.parent.right is current: 
-                        break
-                    current = current.parent
-                    if current is self.root: 
-                        return None  
-                return current.parent 
+    #     if node.left is not None:  
+    #         return self.find_max(node.left)
 
-        return None 
+    #     if node.left is None: 
+    #         if node.parent.right is node: 
+    #             return node.parent   
+    #         else: 
+    #             current = node.parent
+    #             while True and current.parent is not None: 
+    #                 if current.parent.right is current: 
+    #                     break
+    #                 current = current.parent
+    #                 if current is self.root: 
+    #                     return None  
+    #             return current.parent 
+
+    #     return None 
 
     def key_next(self, key): 
         node = self.find(key)
         return self.next(node)
 
     def next(self, node): 
-        if self.size() == 1: 
-            return None
+        pass
 
-        if node.right is not None:  
-            return self.find_min(node.right)
+    # def next(self, node): 
+    #     if self.size() == 1: 
+    #         return None
 
-        if node.right is None: 
-            if node.parent.left is node: 
-                return node.parent   
-            else: 
-                current = node.parent 
-                while True and current.parent is not None: 
-                    if current.parent.left is current: 
-                        break
-                    current = current.parent
-                    if current is self.root: 
-                        return None  
-                return current.parent 
+    #     if node.right is not None:  
+    #         return self.find_min(node.right)
 
-        return None 
+    #     if node.right is None: 
+    #         if node.parent.left is node: 
+    #             return node.parent   
+    #         else: 
+    #             current = node.parent 
+    #             while True and current.parent is not None: 
+    #                 if current.parent.left is current: 
+    #                     break
+    #                 current = current.parent
+    #                 if current is self.root: 
+    #                     return None  
+    #             return current.parent 
+
+    #     return None 
     #
     # ROTATION METHODS
     #
