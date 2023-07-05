@@ -8,6 +8,11 @@
         * does not require other files
 		* printable / narrow width 
 
+        * integrations 
+            - order statistics (for log(n) indexing) 
+            - threaded nodes (for range queries)
+            - range queries (index, key, interval)
+
     API 
         RBT_Node 
             Properties 
