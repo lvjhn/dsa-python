@@ -35,6 +35,8 @@
                 - rebalance_delete(k)
                 - display() 
                 - display_node(root, indent, orient) 
+                - prev(root)
+                - next(root)
 
             Rotation Methods
                 - left_rotate(x) 
@@ -223,7 +225,8 @@ class RBT():
             "    " * indent + \
             f"{orient} : {root.key} -> " +
             f"c: {root.color}, " + 
-            f"v: {root.value}" 
+            f"v: {root.value}, " +
+            f"p: {root.parent.key if root.parent else None}" 
         )
         
         self.display_node(root.left, indent + 1, "left")
@@ -245,6 +248,49 @@ class RBT():
     def values(self): 
         for item in self.iterate(): 
             yield item.value 
+
+    def prev(self, key): 
+        node = self.find(key) 
+        
+        if node.left is not self.TNULL:  
+            return self.find_max(node.left)
+
+        if node.left is self.TNULL: 
+            if node.parent.right is node: 
+                return node.parent   
+            else: 
+                current = node.parent
+                while True: 
+                    if current.parent.right is current: 
+                        break
+                    current = current.parent
+                    if current is self.root: 
+                        return None  
+                return current.parent 
+
+        return None 
+
+
+    def next(self, key): 
+        node = self.find(key) 
+        
+        if node.right is not self.TNULL:  
+            return self.find_min(node.right)
+
+        if node.right is self.TNULL: 
+            if node.parent.left is node: 
+                return node.parent   
+            else: 
+                current = node.parent 
+                while True: 
+                    if current.parent.left is current: 
+                        break
+                    current = current.parent
+                    if current is self.root: 
+                        return None  
+                return current.parent 
+
+        return None 
 
     #
     # ROTATION METHODS

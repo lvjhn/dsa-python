@@ -32,7 +32,9 @@
                 - update_height(node)
                 - display() 
                 - display_node(root, indent, orient)
-            
+                - prev(key)
+                - next(key)
+             
             Rotation Methods
                 - left_rotate(x) 
                 - right_rotate(x)
@@ -136,11 +138,13 @@ class AVLT:
             return 
 
         print(
-            "    " * indent + \
+            "    " * indent + 
             f"{orient} : {root.key} -> " +
             f"h: {self.get_height(root)}, " + 
             f"bf: {self.get_balance_factor(root)}, " + 
-            f"v: {root.value}" 
+            f"v: {root.value}" + 
+            f"p: {root.parent.key if root.parent else None}" 
+
         )
         
         self.display_node(root.left, indent + 1, "left")
@@ -162,6 +166,49 @@ class AVLT:
     def values(self): 
         for item in self.iterate(): 
             yield item.value 
+
+    def prev(self, key): 
+        node = self.find(key) 
+        
+        if node.left is not None:  
+            return self.find_max(node.left)
+
+        if node.left is None: 
+            if node.parent.right is node: 
+                return node.parent   
+            else: 
+                current = node.parent
+                while True: 
+                    if current.parent.right is current: 
+                        break
+                    current = current.parent
+                    if current is self.root: 
+                        return None  
+                return current.parent 
+
+        return None 
+
+
+    def next(self, key): 
+        node = self.find(key) 
+        
+        if node.right is not None:  
+            return self.find_min(node.right)
+
+        if node.right is None: 
+            if node.parent.left is node: 
+                return node.parent   
+            else: 
+                current = node.parent 
+                while True: 
+                    if current.parent.left is current: 
+                        break
+                    current = current.parent
+                    if current is self.root: 
+                        return None  
+                return current.parent 
+
+        return None 
     #
     # ROTATION METHODS
     #
@@ -322,19 +369,19 @@ class AVLT:
         root.height = 1 + max(self.get_height(root.left),
                               self.get_height(root.right))
 
-        # bf = self.get_balance_factor(root)
+        bf = self.get_balance_factor(root)
 
-        # # balance the tree
-        # if bf > 1:
-        #     if self.get_balance_factor(root.left) >= 0:
-        #         return self.right_rotate(root)
-        #     else:
-        #         return self.left_right_rotate(root)
-        # if bf < -1:
-        #     if self.get_balance_factor(root.right) <= 0:
-        #         return self.left_rotate(root)
-        #     else:
-        #         return self.right_left_rotate(root)
+        # balance the tree
+        if bf > 1:
+            if self.get_balance_factor(root.left) >= 0:
+                return self.right_rotate(root)
+            else:
+                return self.left_right_rotate(root)
+        if bf < -1:
+            if self.get_balance_factor(root.right) <= 0:
+                return self.left_rotate(root)
+            else:
+                return self.right_left_rotate(root)
 
         return root 
 

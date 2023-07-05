@@ -27,6 +27,25 @@ print(f"> Tree Size: {bst.size()}")
 print()
 assert(bst.size() == 10)
 
+
+print(f"Printing previous and next...")
+prev_ = [] 
+next_ = [] 
+for item in bst.iterate(): 
+    key = item.key
+    prev__ = bst.prev(key)
+    next__ = bst.next(key)
+    
+    print(f"@ item-{key} : ".ljust(20) + \
+          f"prev ({prev__.key if prev__ else None}), " + \
+          f"next ({next__.key if next__ else None})")
+    
+    prev_.append(prev__.key if prev__ else None)
+    next_.append(next__.key if next__ else None)
+assert(prev_ == [None, 10, 20, 30, 40, 50, 60, 70, 80, 90])
+assert(next_ == [20, 30, 40, 50, 60, 70, 80, 90, 100, None])
+print()
+
 # printing keys and values 
 print(f"> Displaying keys and values...")
 print(f"> Keys: {list(bst.keys())}")
