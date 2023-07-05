@@ -1,0 +1,63 @@
+# DEMO OF AVL TREE ADT #
+> Tree Size: 0
+
+> Inserting items to the tree...
+root : 40 -> h: 4, bf: -1, v: dp: None, nd: 10
+    left : 20 -> h: 2, bf: 0, v: bp: 40, nd: 3
+        left : 10 -> h: 1, bf: 0, v: ap: 20, nd: 1
+        right : 30 -> h: 1, bf: 0, v: cp: 20, nd: 1
+    right : 80 -> h: 3, bf: 0, v: hp: 40, nd: 6
+        left : 60 -> h: 2, bf: 0, v: fp: 80, nd: 3
+            left : 50 -> h: 1, bf: 0, v: ep: 60, nd: 1
+            right : 70 -> h: 1, bf: 0, v: gp: 60, nd: 1
+        right : 90 -> h: 2, bf: -1, v: ip: 80, nd: 2
+            right : 100 -> h: 1, bf: 0, v: jp: 90, nd: 1
+> Tree Size: 10
+
+> Printing at values...
+> bst.at(0) = 10 -> a
+> bst.at(1) = 20 -> b
+> bst.at(2) = 30 -> c
+> bst.at(3) = 40 -> d
+> bst.at(4) = 50 -> e
+> bst.at(5) = 60 -> f
+> bst.at(6) = 70 -> g
+> bst.at(7) = 80 -> h
+> bst.at(8) = 90 -> i
+> bst.at(9) = 100 -> j
+
+Printing previous and next...
+@ item-10 :         prev (None), next (20)
+@ item-20 :         prev (10), next (30)
+@ item-30 :         prev (20), next (40)
+@ item-40 :         prev (30), next (50)
+@ item-50 :         prev (40), next (60)
+@ item-60 :         prev (50), next (70)
+@ item-70 :         prev (60), next (80)
+@ item-80 :         prev (70), next (90)
+@ item-90 :         prev (80), next (100)
+@ item-100 :        prev (90), next (None)
+
+> Displaying keys and values...
+> Keys: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+> Values: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
+
+Finding 50: <bsts.structs.avlt.AVLT_Node object at 0x7f94fcbac880>
+Finding -1: None
+
+Deleting items 20, 50, 70 from the tree..
+root : 80 -> h: 4, bf: 1, v: hp: None, nd: 7
+    left : 40 -> h: 3, bf: -1, v: dp: 80, nd: 4
+        left : 10 -> h: 1, bf: 0, v: ap: 20, nd: 1
+        right : 60 -> h: 2, bf: -1, v: fp: 40, nd: 2
+            right : 70 -> h: 1, bf: 0, v: gp: 60, nd: 1
+    right : 90 -> h: 2, bf: -1, v: ip: 80, nd: 2
+        right : 100 -> h: 1, bf: 0, v: jp: 90, nd: 1
+
+> Displaying keys and values...
+> Keys: [10, 40, 60, 70, 80, 90, 100]
+> Values: ['a', 'd', 'f', 'g', 'h', 'i', 'j']
+
+> Update value of 70 to 'z'...
+> Current Value of '70': g
+> New Value of '70': z

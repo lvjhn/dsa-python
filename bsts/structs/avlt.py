@@ -16,16 +16,19 @@
             - parent 
             - left 
             - right 
+            - n_desc
 
         AVLT 
             Properties 
                 - count 
                 - root 
 
-            Utility Methods 
+            Utility Methods
+                - at(index)
                 - size() 
                 - get_height(root) 
                 - get_balance_factor(root) 
+                - get_n_desc(root)
                 - find_min(root)  
                 - find_max(root) 
                 - find(key, root)
@@ -52,24 +55,56 @@
 """ 
 
 class AVLT_Node(): 
-    def __init__(self, key, value):
+    def __init__(self, key, value, **kwargs):
         self.key = key 
         self.value = value
 
         self.height = 1
+        self.n_desc = 1
 
         self.parent = None 
         self.left = None 
-        self.right = None 
+        self.right = None
 
 class AVLT: 
-    def __init__(self): 
+    def __init__(self, **kwargs): 
         self.count = 0 
-        self.root = None 
+        self.root = None      
 
     #
     # UTILITY METHODS
-    # 
+    #
+
+    def at(self, index): 
+        current = self.root 
+        lo = 0
+        hi = self.size() - 1
+
+        while current.n_desc > 1: 
+            if current.left: 
+                mid = lo + current.left.n_desc
+            elif current.right: 
+                mid = lo
+            
+            left = (lo, mid)
+            right = (mid + 1, hi) 
+
+            # print(current.key, mid, lo, hi, left, right, current.n_desc)
+
+            if index == mid: 
+                return current 
+            
+            elif index >= left[0] and index <= left[1]: 
+                # print("@ left")
+                hi = mid - 1
+                current = current.left
+
+            elif index >= right[0] and index <= right[1]:
+                # print("@ right")
+                lo = mid + 1
+                current = current.right
+ 
+        return current 
 
     def size(self): 
         return self.count 
@@ -82,7 +117,12 @@ class AVLT:
     def get_balance_factor(self, root): 
         if root is None: 
             return 0    
-        return self.get_height(root.left) - self.get_height(root.right) 
+        return self.get_height(root.left) - self.get_height(root.right)
+
+    def get_n_desc(self, root): 
+        if root is None: 
+            return 0 
+        return root.n_desc 
 
     def find(self, key, root = None): 
         if self.root is None: 
@@ -143,8 +183,8 @@ class AVLT:
             f"h: {self.get_height(root)}, " + 
             f"bf: {self.get_balance_factor(root)}, " + 
             f"v: {root.value}" + 
-            f"p: {root.parent.key if root.parent else None}" 
-
+            f"p: {root.parent.key if root.parent else None}, " + 
+            f"nd: {root.n_desc}"
         )
         
         self.display_node(root.left, indent + 1, "left")
@@ -237,6 +277,11 @@ class AVLT:
             1 + max(self.get_height(x.left), self.get_height(x.right))
         y.height = \
             1 + max(self.get_height(y.left), self.get_height(y.right))
+        
+        x.n_desc = \
+            1 + self.get_n_desc(x.left) + self.get_n_desc(x.right) 
+        y.n_desc = \
+            1 + self.get_n_desc(y.left) + self.get_n_desc(y.right)
 
         return y
 
@@ -261,8 +306,13 @@ class AVLT:
         x.height = \
             1 + max(self.get_height(x.left), self.get_height(x.right))
         y.height = \
-            1 + max(self.get_height(y.left), self.get_height(y.right))
-
+            smax(self.get_height(y.left), self.get_height(y.right))
+                
+        x.n_desc = \
+            1 + self.get_n_desc(x.left) + self.get_n_desc(x.right) 
+        y.n_desc = \
+            1 + self.get_n_desc(y.left) + self.get_n_desc(y.right)
+       
         return y
 
     def left_right_rotate(self, A):
@@ -300,6 +350,9 @@ class AVLT:
 
         root.height = 1 + max(self.get_height(root.left),
                               self.get_height(root.right))
+
+        root.n_desc = 1 + self.get_n_desc(root.left) + \
+                          self.get_n_desc(root.right)
 
         # update the balance factor and balance the tree
         bf = self.get_balance_factor(root)
@@ -368,6 +421,9 @@ class AVLT:
         # update the balance factor of nodes
         root.height = 1 + max(self.get_height(root.left),
                               self.get_height(root.right))
+
+        root.n_desc = 1 + self.get_n_desc(root.left) + \
+                          self.get_n_desc(root.right)
 
         bf = self.get_balance_factor(root)
 

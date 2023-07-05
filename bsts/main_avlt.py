@@ -27,6 +27,12 @@ print(f"> Tree Size: {bst.size()}")
 print()
 assert(bst.size() == 10)
 
+print("> Printing at values...")
+items = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+for i in range(len(items)): 
+    print(f"> bst.at({i}) = {bst.at(i).key} -> {bst.at(i).value}")
+    assert(bst.at(i).key == items[i])
+print()
 
 print(f"Printing previous and next...")
 prev_ = [] 

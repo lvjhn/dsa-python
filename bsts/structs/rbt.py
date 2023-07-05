@@ -26,9 +26,10 @@
             
             Utility Methods 
                 - size() 
+                - at(index)
                 - find_min(root)  
                 - find_max(root) 
-                - update_height(node)
+                - get_n_desc(root)
                 - find(key, root)
                 - transplant(u, v)
                 - rebalance_insert(k)
@@ -37,6 +38,7 @@
                 - display_node(root, indent, orient) 
                 - prev(root)
                 - next(root)
+                - update_n_desc(root)
 
             Rotation Methods
                 - left_rotate(x) 
@@ -51,6 +53,7 @@
                 - delete_node(root, key)
                 - clear()
                 - update(key, value)
+                
 """ 
 
 
@@ -58,6 +61,8 @@ class RBT_Node():
     def __init__(self, key, value):
         self.key = key 
         self.value = value
+
+        self.n_desc = 1
 
         self.parent = None
         self.left = None
@@ -71,12 +76,44 @@ class RBT():
         self.TNULL.color = 0
         self.TNULL.left = None
         self.TNULL.right = None
+        self.TNULL.n_desc = 0
         self.root = self.TNULL
         self.count = 0
 
     #
     # UTILITY METHODS
     #
+
+    def at(self, index): 
+        current = self.root 
+        lo = 0
+        hi = self.size() - 1
+
+        while current.n_desc > 1: 
+            if current.left: 
+                mid = lo + current.left.n_desc
+            elif current.right: 
+                mid = lo
+            
+            left = (lo, mid)
+            right = (mid + 1, hi) 
+
+            # print(current.key, mid, lo, hi, left, right, current.n_desc)
+
+            if index == mid: 
+                return current 
+            
+            elif index >= left[0] and index <= left[1]: 
+                # print("@ left")
+                hi = mid - 1
+                current = current.left
+
+            elif index >= right[0] and index <= right[1]:
+                # print("@ right")
+                lo = mid + 1
+                current = current.right
+ 
+        return current 
 
     def size(self): 
         return self.count 
@@ -118,6 +155,11 @@ class RBT():
             return root 
 
         return self.find_max(root.right)
+
+    def get_n_desc(self, root): 
+        if root is None: 
+            return 0 
+        return root.n_desc 
       
     def transplant(self, u, v):
         if u.parent == None:
@@ -159,6 +201,8 @@ class RBT():
                     k.parent.color = 0
                     k.parent.parent.color = 1
                     self.right_rotate(k.parent.parent)
+
+            
             if k == self.root:
                 break
         self.root.color = 0
@@ -166,6 +210,7 @@ class RBT():
     
     def rebalance_delete(self, x):
         while x != self.root and x.color == 0:
+
             if x == x.parent.left:
                 s = x.parent.right
                 if s.color == 1:
@@ -212,6 +257,8 @@ class RBT():
                     s.left.color = 0
                     self.right_rotate(x.parent)
                     x = self.root
+
+
         x.color = 0
 
     def display(self): 
@@ -226,7 +273,8 @@ class RBT():
             f"{orient} : {root.key} -> " +
             f"c: {root.color}, " + 
             f"v: {root.value}, " +
-            f"p: {root.parent.key if root.parent else None}" 
+            f"p: {root.parent.key if root.parent else None}, " + 
+            f"nd: {root.n_desc}"
         )
         
         self.display_node(root.left, indent + 1, "left")
@@ -292,6 +340,13 @@ class RBT():
 
         return None 
 
+    def update_n_desc(self, root):
+        current = root 
+        while current is not None: 
+            current.n_desc = 1 + self.get_n_desc(current.left) + \
+                                 self.get_n_desc(current.right)
+            current = current.parent 
+
     #
     # ROTATION METHODS
     #
@@ -312,6 +367,11 @@ class RBT():
         y.left = x
         x.parent = y
 
+        x.n_desc = \
+            1 + self.get_n_desc(x.left) + self.get_n_desc(x.right) 
+        y.n_desc = \
+            1 + self.get_n_desc(y.left) + self.get_n_desc(y.right)
+
         return y
 
     def right_rotate(self, x):
@@ -329,6 +389,11 @@ class RBT():
             x.parent.left = y
         y.right = x
         x.parent = y
+
+        x.n_desc = \
+            1 + self.get_n_desc(x.left) + self.get_n_desc(x.right) 
+        y.n_desc = \
+            1 + self.get_n_desc(y.left) + self.get_n_desc(y.right)
 
         return y
 
@@ -374,6 +439,7 @@ class RBT():
             return node
 
         self.rebalance_insert(node)
+        self.update_n_desc(node)
 
         return node
         
@@ -429,6 +495,8 @@ class RBT():
 
         if y_original_color == 0:
             self.rebalance_delete(x)
+
+        self.update_n_desc(z)
 
     def clear(self): 
         self.root = None 
