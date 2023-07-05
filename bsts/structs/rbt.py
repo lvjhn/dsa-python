@@ -80,10 +80,14 @@ class RBT_Node():
         self.n_desc = 1
 
         self.parent = None
+
         self.left = None
         self.right = None
         
         self.color = 1
+
+        self.prev = None
+        self.next = None
     
 class RBT():
     def __init__(self):
@@ -352,18 +356,23 @@ class RBT():
         for item in self.iterate(): 
             yield item.value 
 
-    def prev(self, key): 
-        node = self.find(key) 
-        
-        if node.left is not self.TNULL:  
+    def key_prev(self, key): 
+        node = self.find(key)
+        return self.prev(node)
+
+    def prev(self, node):   
+        if self.size() == 1: 
+            return None
+
+        if node.left is not None:  
             return self.find_max(node.left)
 
-        if node.left is self.TNULL: 
+        if node.left is None: 
             if node.parent.right is node: 
                 return node.parent   
             else: 
                 current = node.parent
-                while True: 
+                while True and current.parent is not None: 
                     if current.parent.right is current: 
                         break
                     current = current.parent
@@ -373,19 +382,23 @@ class RBT():
 
         return None 
 
+    def key_next(self, key): 
+        node = self.find(key)
+        return self.next(node)
 
-    def next(self, key): 
-        node = self.find(key) 
-        
-        if node.right is not self.TNULL:  
+    def next(self, node): 
+        if self.size() == 1: 
+            return None
+
+        if node.right is not None:  
             return self.find_min(node.right)
 
-        if node.right is self.TNULL: 
+        if node.right is None: 
             if node.parent.left is node: 
                 return node.parent   
             else: 
                 current = node.parent 
-                while True: 
+                while True and current.parent is not None: 
                     if current.parent.left is current: 
                         break
                     current = current.parent
@@ -427,6 +440,11 @@ class RBT():
         y.n_desc = \
             1 + self.get_n_desc(y.left) + self.get_n_desc(y.right)
 
+        max_right = self.find_min(x.right)
+        
+        if max_right: 
+            self.set_next(max_right, y) 
+
         return y
 
     def right_rotate(self, x):
@@ -450,7 +468,26 @@ class RBT():
         y.n_desc = \
             1 + self.get_n_desc(y.left) + self.get_n_desc(y.right)
 
+        min_left = self.find_min(x.left)
+        
+        if min_left: 
+            self.set_prev(min_left, y)
+
         return y
+
+    #
+    # THREADED BINARY TREE METHODS 
+    # 
+    
+    def set_prev(self, node, prev): 
+        node.prev = prev 
+        if prev:
+            prev.next = node 
+
+    def set_next(self, node, next_): 
+        node.next = next_ 
+        if next_:
+            next_.prev = node 
 
     #
     # MAIN OPERATIONS
@@ -462,8 +499,12 @@ class RBT():
         node.left = self.TNULL
         node.right = self.TNULL
         node.color = 1
+
         self.insert_node(node)
         self.count += 1
+        
+        self.set_prev(node, self.prev(node))
+        self.set_next(node, self.next(node))
 
 
     def insert_node(self, node): 
@@ -529,26 +570,43 @@ class RBT():
 
         if z.left is self.TNULL:
             x = z.right
-            self.transplant(z, z.right)
+            self.transplant(z, x)
+
+            self.set_prev(x, self.prev(x))
+            self.set_next(x, self.next(x))
+           
         elif z.right is self.TNULL:
             x = z.left
             self.transplant(z, z.left)
+
+            self.set_prev(x, self.prev(x))
+            self.set_next(x, self.next(x))
+
         else:
             y = self.find_min(z.right)
             y_original_color = y.color
 
             x = y.right
+            
             if y.parent == z:
                 x.parent = y
             else:
-                self.transplant(y, y.right)
+                self.transplant(y, x)
+
                 y.right = z.right
                 y.right.parent = y
 
+                self.set_prev(x, self.prev(x))
+                self.set_next(x, self.next(x))
+
             self.transplant(z, y)
+
             y.left = z.left
             y.left.parent = y
             y.color = z.color
+
+            self.set_prev(y, self.prev(y))
+            self.set_next(y, self.next(y))
 
         if y_original_color == 0:
             self.rebalance_delete(x)

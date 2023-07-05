@@ -83,8 +83,8 @@ class AVLT_Node():
         self.left = None 
         self.right = None
 
+        self.prev = None
         self.next = None 
-        self.prev = None 
 
 class AVLT: 
     def __init__(self, **kwargs): 
@@ -136,7 +136,7 @@ class AVLT:
 
         key_node = AVLT_Node(key, None)
 
-        while current is not None: 
+        while current.leaf: 
             if current.left: 
                 mid = lo + current.left.n_desc
             elif current.right: 
@@ -276,12 +276,12 @@ class AVLT:
             f"{orient} : {root.key} -> " +
             f"h: {self.get_height(root)}, " + 
             f"bf: {self.get_balance_factor(root)}, " + 
-            f"v: {root.value}" + 
-            f"p: {root.parent.key if root.parent else None}, " + 
+            f"v: {root.value}, " + 
+            f"pt: {root.parent.key if root.parent else None}, " + 
             f"nd: {root.n_desc}, " + 
             f"l: {root.left.key if root.left else None}, " + 
             f"r: {root.right.key if root.right else None}, " + 
-            f"p: {root.prev.key if root.prev else None} " +
+            f"p: {root.prev.key if root.prev else None}, " +
             f"n: {root.next.key if root.next else None}" 
         )
         
@@ -289,14 +289,12 @@ class AVLT:
         self.display_node(root.right, indent + 1, "right")
     
     def iterate(self): 
-        def inorder(node):
-            if node.left: 
-                yield from inorder(node.left) 
-            yield node
-            if node.right:
-                yield from inorder(node.right)             
-        return inorder(self.root)
-
+        current = self.find_min(self.root) 
+        while current is not None: 
+            yield current 
+            current = current.next
+        return None
+        
     def keys(self): 
         for item in self.iterate(): 
             yield item.key
@@ -309,59 +307,55 @@ class AVLT:
         node = self.find(key)
         return self.prev(node)
 
-    def prev(self, node): 
-        pass 
+    def prev(self, node):   
+        if self.size() == 1: 
+            return None
 
-    # def prev(self, node):   
-    #     if self.size() == 1: 
-    #         return None
+        if node.left is not None:  
+            return self.find_max(node.left)
 
-    #     if node.left is not None:  
-    #         return self.find_max(node.left)
+        if node.left is None: 
+            if node.parent.right is node: 
+                return node.parent   
+            else: 
+                current = node.parent
+                while True and current.parent is not None: 
+                    if current.parent.right is current: 
+                        break
+                    current = current.parent
+                    if current is self.root: 
+                        return None  
+                return current.parent 
 
-    #     if node.left is None: 
-    #         if node.parent.right is node: 
-    #             return node.parent   
-    #         else: 
-    #             current = node.parent
-    #             while True and current.parent is not None: 
-    #                 if current.parent.right is current: 
-    #                     break
-    #                 current = current.parent
-    #                 if current is self.root: 
-    #                     return None  
-    #             return current.parent 
-
-    #     return None 
+        return None 
 
     def key_next(self, key): 
         node = self.find(key)
         return self.next(node)
 
     def next(self, node): 
-        pass
+        if self.size() == 1: 
+            return None
 
-    # def next(self, node): 
-    #     if self.size() == 1: 
-    #         return None
+        if node.right is not None:  
+            return self.find_min(node.right)
 
-    #     if node.right is not None:  
-    #         return self.find_min(node.right)
+        if node.right is None: 
+            if node.parent.left is node: 
+                return node.parent   
+            else: 
+                current = node.parent 
+                while True and current.parent is not None: 
+                    if current.parent.left is current: 
+                        break
+                    current = current.parent
+                    if current is self.root: 
+                        return None  
+                return current.parent 
 
-    #     if node.right is None: 
-    #         if node.parent.left is node: 
-    #             return node.parent   
-    #         else: 
-    #             current = node.parent 
-    #             while True and current.parent is not None: 
-    #                 if current.parent.left is current: 
-    #                     break
-    #                 current = current.parent
-    #                 if current is self.root: 
-    #                     return None  
-    #             return current.parent 
+        return None 
 
-    #     return None 
+
     #
     # ROTATION METHODS
     #
@@ -397,10 +391,10 @@ class AVLT:
         y.n_desc = \
             1 + self.get_n_desc(y.left) + self.get_n_desc(y.right)
 
-        max_right = self.find_max(y.left)
+        max_right = self.find_min(x.right)
         
         if max_right: 
-            max_right.next = y 
+            self.set_next(max_right, y) 
 
         return y
 
@@ -433,10 +427,10 @@ class AVLT:
         y.n_desc = \
             1 + self.get_n_desc(y.left) + self.get_n_desc(y.right)
         
-        max_left = self.find_min(y.left)
+        min_left = self.find_min(x.left)
         
-        if max_left: 
-            max_left.prev = y 
+        if min_left: 
+            self.set_prev(min_left, y)
 
         return y
 
@@ -451,6 +445,20 @@ class AVLT:
         return self.left_rotate(A)
 
     #
+    # THREADED BINARY TREE METHODS 
+    # 
+    
+    def set_prev(self, node, prev): 
+        node.prev = prev 
+        if prev:
+            prev.next = node 
+
+    def set_next(self, node, next_): 
+        node.next = next_ 
+        if next_:
+            next_.prev = node 
+
+    #
     # MAIN OPERATIONS 
     # 
 
@@ -459,9 +467,9 @@ class AVLT:
         
         self.insert_node(self.root, node, None)
         self.count += 1
-    
-        node.prev = self.prev(node)
-        node.next = self.next(node)
+
+        self.set_prev(node, self.prev(node))
+        self.set_next(node, self.next(node))
 
         return node
 
@@ -511,26 +519,42 @@ class AVLT:
             return root
 
         if self.equals(root, key_node):
-            if root.left is None:
+            if root.left is None and root.right is not None:
                 temp = root.right
-                root = None 
+                temp.parent = root.parent
+                
+                self.set_prev(temp, self.prev(temp))
+                self.set_next(temp, self.next(temp))
+                
                 return temp
             
-            elif root.right is None:
+            elif root.right is None and root.left is not None:
                 temp = root.left
-                root = None
+                temp.parent = root.parent
+
+                self.set_prev(temp, self.prev(temp))
+                self.set_next(temp, self.next(temp)) 
+
                 return temp
 
             elif root.left is None and root.right is None: 
+                
                 if root.parent.left is root: 
                     root.parent.left = None 
                 else: 
-                    root.parent.right = None         
+                    root.parent.right = None
+   
+                self.set_prev(root.parent, self.prev(root.parent))
+                self.set_next(root.parent, self.next(root.parent))
+
                 return   
             else:
                 temp = self.find_min(root.right)
                 temp.right = self.delete_node(root.right, temp)
                 temp.left = root.left 
+
+                if root.left: 
+                    root.left.parent = temp
 
                 if root is self.root: 
                     self.root = temp
@@ -539,7 +563,11 @@ class AVLT:
                         root.parent.left = temp 
                     else: 
                         root.parent.right = temp
-                    temp.parent = root.parent 
+                    
+                    temp.parent = root.parent   
+
+                self.set_prev(temp, self.prev(temp)) 
+                self.set_next(temp, self.next(temp))
 
                 root = temp
 
@@ -555,9 +583,7 @@ class AVLT:
         root.height = 1 + max(self.get_height(root.left),
                               self.get_height(root.right))
 
-        root.n_desc = 1 + self.get_n_desc(root.left) + \
-                          self.get_n_desc(root.right)
-
+        
         bf = self.get_balance_factor(root)
 
         # balance the tree
