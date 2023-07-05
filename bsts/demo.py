@@ -17,7 +17,7 @@ def main():
 
     # insert keys to the tree
     print(f"> Inserting keys to the tree...")
-    for i in range(10000): 
+    for i in range(100000): 
         # print(f"> Inserting ({i * 10}, None)")
         bst.insert(i * 10, None)
         # bst.display() 
@@ -37,6 +37,8 @@ def main():
     # iterate over elements 
     for item in bst.iterate(): 
         print(item.key)
+
+    bst.display()
 
 def bench(): 
     for i in range(10000): 

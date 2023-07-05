@@ -28,13 +28,6 @@
                 - at(index)
                 - index(key)
 
-                - index_range(i, j) 
-                - key_range(key_a, key_b)
-                - key_range_forward(kn_a, kn_b) 
-                - key_range_backward(kn_a, kn_b) 
-                - find_vsplit_forward(kn_a, kn_b) 
-                - find_vsplit_backward(kn_a, kn_b
-
                 - size() 
                 
                 - find(key, root)
@@ -53,13 +46,27 @@
                 
                 - prev(root)
                 - next(root)
-                
 
+                - iterate()
+                - keys()
+                - values()
+                
+                - key_prev(key)
+                - prev(node)
+                - key_next(next)
+                - next(node) 
+
+                - update_n_desc()
+                
             Rotation Methods
                 - left_rotate(x) 
                 - right_rotate(x)
                 - left_right_rotate(A) 
                 - right_left_rotate(A) 
+            
+            Threaded Binary Tree Methods 
+                - set_prev(node, prev)
+                - set_next(node, next)
             
             Main Operations 
                 - insert(key, value) 
@@ -332,8 +339,12 @@ class RBT():
             f"{orient} : {root.key} -> " +
             f"c: {root.color}, " + 
             f"v: {root.value}, " +
-            f"p: {root.parent.key if root.parent else None}, " + 
-            f"nd: {root.n_desc}"
+            f"pt: {root.parent.key if root.parent else None}, " + 
+            f"nd: {root.n_desc}, " + 
+            f"l: {root.left.key if root.left else None}, " + 
+            f"r: {root.right.key if root.right else None}, " + 
+            f"p: {root.prev.key if root.prev else None}, " +
+            f"n: {root.next.key if root.next else None}" 
         )
         
         self.display_node(root.left, indent + 1, "left")

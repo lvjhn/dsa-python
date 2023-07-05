@@ -26,13 +26,6 @@
             Utility Methods
                 - at(index)
                 - index(key)
-                
-                - index_range(i, j) 
-                - key_range(key_a, key_b)
-                - key_range_forward(kn_a, kn_b) 
-                - key_range_backward(kn_a, kn_b) 
-                - find_vsplit_forward(kn_a, kn_b) 
-                - find_vsplit_backward(kn_a, kn_b)
 
                 - size() 
                 - get_height(root) 
@@ -48,14 +41,24 @@
                 - display() 
                 - display_node(root, indent, orient)
                 
-                - prev(key)
-                - next(key)
+                - iterate()
+                - keys()
+                - values()
+                
+                - key_prev(key)
+                - prev(node)
+                - key_next(next)
+                - next(node)
              
             Rotation Methods
                 - left_rotate(x) 
                 - right_rotate(x)
                 - left_right_rotate(A) 
                 - right_left_rotate(A) 
+
+            Threaded Binary Tree Methods 
+                - set_prev(node, prev)
+                - set_next(node, next)
             
             Main Operations 
                 - insert(key, value) 
@@ -160,43 +163,6 @@ class AVLT:
                 current = current.right
  
         return None 
-
-    def index_range(self, i, j): 
-        key_a = self.at(i).key
-        key_b = self.at(j).key 
-        print(key_a, key_b)
-        yield from self.key_range(key_a, key_b) 
-
-    def key_range(self, key_a, key_b): 
-        kn_a = AVLT_Node(key_a, None)
-        kn_b = AVLT_Node(key_b, None)
-
-        if self.equals(kn_a, kn_b): 
-            yield self.find(kn_a.key) 
-        elif self.comparator(kn_a, kn_b): 
-            yield from self.key_range_forward(kn_a, kn_b) 
-        elif not self.comparator(kn_a, kn_b): 
-            yield from self.key_range_backward(kn_a, kn_b) 
-    
-    def key_range_forward(self, kn_a, kn_b): 
-        vsplit = self.find_vsplit_forward(kn_a, kn_b)
-
-        print(f"vsplit: {vsplit.key}") 
-
-    def find_vsplit_forward(self, kn_a, kn_b):
-        current = self.root 
-        while current is not None: 
-            if self.equals(kn_a, current) or \
-               self.equals(kn_b, current): 
-               return current
-            if self.comparator(kn_a, current) and \
-               not self.comparator(kn_b, current): 
-               return current 
-            if self.comparator(kn_a, current): 
-                current = current.left 
-            else: 
-                current = current.right 
-        return None
 
     def size(self): 
         return self.count 
