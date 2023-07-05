@@ -4,7 +4,7 @@ from .structs.rbt import RBT, RBT_Node
 def main(): 
 
     # create stack
-    bst = AVLT() 
+    bst = RBT() 
 
     print(bst)
 
