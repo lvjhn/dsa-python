@@ -25,16 +25,29 @@
 
             Utility Methods
                 - at(index)
+                - index(key)
+                
+                - index_range(i, j) 
+                - key_range(key_a, key_b)
+                - key_range_forward(kn_a, kn_b) 
+                - key_range_backward(kn_a, kn_b) 
+                - find_vsplit_forward(kn_a, kn_b) 
+                - find_vsplit_backward(kn_a, kn_b)
+
                 - size() 
                 - get_height(root) 
                 - get_balance_factor(root) 
                 - get_n_desc(root)
+
+                - find(key, root)
                 - find_min(root)  
                 - find_max(root) 
-                - find(key, root)
+                
                 - update_height(node)
+
                 - display() 
                 - display_node(root, indent, orient)
+                
                 - prev(key)
                 - next(key)
              
@@ -47,10 +60,13 @@
             Main Operations 
                 - insert(key, value) 
                 - insert_node(root, node, parent) 
+                
+                - update(key, value)
+
                 - delete(key) 
                 - delete_node(root, key)
+                
                 - clear()
-                - update(key, value)
 
 """ 
 
@@ -63,8 +79,11 @@ class AVLT_Node():
         self.n_desc = 1
 
         self.parent = None 
+        
         self.left = None 
         self.right = None
+
+        self.leaf = False 
 
 class AVLT: 
     def __init__(self, **kwargs): 
@@ -74,6 +93,12 @@ class AVLT:
     #
     # UTILITY METHODS
     #
+
+    def comparator(self, a, b): 
+        return a.key < b.key 
+
+    def equals(self, a, b): 
+        return a.key == b.key
 
     def at(self, index): 
         current = self.root 
@@ -89,22 +114,88 @@ class AVLT:
             left = (lo, mid)
             right = (mid + 1, hi) 
 
-            # print(current.key, mid, lo, hi, left, right, current.n_desc)
-
             if index == mid: 
                 return current 
             
             elif index >= left[0] and index <= left[1]: 
-                # print("@ left")
                 hi = mid - 1
                 current = current.left
 
             elif index >= right[0] and index <= right[1]:
-                # print("@ right")
                 lo = mid + 1
                 current = current.right
  
         return current 
+
+   
+    def index(self, key): 
+        current = self.root 
+        lo = 0
+        hi = self.size() - 1
+
+        key_node = AVLT_Node(key, None)
+
+        while current.leaf: 
+            if current.left: 
+                mid = lo + current.left.n_desc
+            elif current.right: 
+                mid = lo
+            
+            left = (lo, mid)
+            right = (mid + 1, hi) 
+
+            if current.n_desc == 1 and key == current.key: 
+                return lo
+
+            elif key == current.key: 
+                return mid 
+            
+            elif self.comparator(key_node, current): 
+                hi = mid - 1
+                current = current.left
+
+            elif not self.comparator(key_node, current):
+                lo = mid + 1
+                current = current.right
+ 
+        return None 
+
+    def index_range(self, i, j): 
+        key_a = self.at(i).key
+        key_b = self.at(j).key 
+        print(key_a, key_b)
+        yield from self.key_range(key_a, key_b) 
+
+    def key_range(self, key_a, key_b): 
+        kn_a = AVLT_Node(key_a, None)
+        kn_b = AVLT_Node(key_b, None)
+
+        if self.equals(kn_a, kn_b): 
+            yield self.find(kn_a.key) 
+        elif self.comparator(kn_a, kn_b): 
+            yield from self.key_range_forward(kn_a, kn_b) 
+        elif not self.comparator(kn_a, kn_b): 
+            yield from self.key_range_backward(kn_a, kn_b) 
+    
+    def key_range_forward(self, kn_a, kn_b): 
+        vsplit = self.find_vsplit_forward(kn_a, kn_b)
+
+        print(f"vsplit: {vsplit.key}") 
+
+    def find_vsplit_forward(self, kn_a, kn_b):
+        current = self.root 
+        while current is not None: 
+            if self.equals(kn_a, current) or \
+               self.equals(kn_b, current): 
+               return current
+            if self.comparator(kn_a, current) and \
+               not self.comparator(kn_b, current): 
+               return current 
+            if self.comparator(kn_a, current): 
+                current = current.left 
+            else: 
+                current = current.right 
+        return None
 
     def size(self): 
         return self.count 
@@ -133,13 +224,16 @@ class AVLT:
         else: 
             current = root 
 
+        key_node = AVLT_Node(key, None)
+
         while current is not None: 
-            if key < current.key:
+            if self.equals(key_node, current): 
+                return current
+            elif self.comparator(key_node, current):
                 current = current.left
-            elif key > current.key: 
+            elif not self.comparator(key_node, current): 
                 current = current.right
-            else: 
-                return current 
+    
         return None
 
     def find_min(self, root): 
@@ -164,7 +258,6 @@ class AVLT:
 
         return self.find_max(root.right)
 
-
     
     def update_height(self, node): 
         node.height = 1 + max(self.get_height(node.left), 
@@ -184,7 +277,11 @@ class AVLT:
             f"bf: {self.get_balance_factor(root)}, " + 
             f"v: {root.value}" + 
             f"p: {root.parent.key if root.parent else None}, " + 
-            f"nd: {root.n_desc}"
+            f"nd: {root.n_desc}, " + 
+            f"l: {root.left.key if root.left else None}, " + 
+            f"r: {root.right.key if root.right else None}, " + 
+            f"p: {root.prev.key if root.prev else None} " +
+            f"n: {root.next.key if root.next else None}" 
         )
         
         self.display_node(root.left, indent + 1, "left")
@@ -207,9 +304,14 @@ class AVLT:
         for item in self.iterate(): 
             yield item.value 
 
-    def prev(self, key): 
-        node = self.find(key) 
-        
+    def key_prev(self, key): 
+        node = self.find(key)
+        return self.prev(node)
+
+    def prev(self, node):   
+        if self.size() == 1: 
+            return None
+
         if node.left is not None:  
             return self.find_max(node.left)
 
@@ -218,7 +320,7 @@ class AVLT:
                 return node.parent   
             else: 
                 current = node.parent
-                while True: 
+                while True and current.parent is not None: 
                     if current.parent.right is current: 
                         break
                     current = current.parent
@@ -228,10 +330,14 @@ class AVLT:
 
         return None 
 
+    def key_next(self, key): 
+        node = self.find(key)
+        return self.next(node)
 
-    def next(self, key): 
-        node = self.find(key) 
-        
+    def next(self, node): 
+        if self.size() == 1: 
+            return None
+
         if node.right is not None:  
             return self.find_min(node.right)
 
@@ -240,7 +346,7 @@ class AVLT:
                 return node.parent   
             else: 
                 current = node.parent 
-                while True: 
+                while True and current.parent is not None: 
                     if current.parent.left is current: 
                         break
                     current = current.parent
@@ -254,6 +360,7 @@ class AVLT:
     #
 
     def left_rotate(self, x): 
+        print("Left Rotate")
         y = x.right
 
         x.right = y.left
@@ -283,9 +390,15 @@ class AVLT:
         y.n_desc = \
             1 + self.get_n_desc(y.left) + self.get_n_desc(y.right)
 
+        max_right = self.find_max(y.left)
+        
+        if max_right: 
+            max_right.next = y 
+
         return y
 
     def right_rotate(self, x): 
+        print("Right Rotate")
         y = x.left
         x.left = y.right
 
@@ -306,13 +419,18 @@ class AVLT:
         x.height = \
             1 + max(self.get_height(x.left), self.get_height(x.right))
         y.height = \
-            smax(self.get_height(y.left), self.get_height(y.right))
+            1 + max(self.get_height(y.left), self.get_height(y.right))
                 
         x.n_desc = \
             1 + self.get_n_desc(x.left) + self.get_n_desc(x.right) 
         y.n_desc = \
             1 + self.get_n_desc(y.left) + self.get_n_desc(y.right)
-       
+        
+        max_left = self.find_min(y.left)
+        
+        if max_left: 
+            max_left.prev = y 
+
         return y
 
     def left_right_rotate(self, A):
@@ -331,8 +449,13 @@ class AVLT:
 
     def insert(self, key, value): 
         node = AVLT_Node(key, value) 
+        
         self.insert_node(self.root, node, None)
         self.count += 1
+    
+        node.prev = self.prev(node)
+        node.next = self.next(node)
+
         return node
 
     def insert_node(self, root, node, parent): 
@@ -343,7 +466,7 @@ class AVLT:
         elif not root:
             node.parent = parent
             return node
-        elif node.key < root.key:
+        elif self.comparator(node, root):
             root.left = self.insert_node(root.left, node, root)
         else:
             root.right = self.insert_node(root.right, node, root)
@@ -371,18 +494,16 @@ class AVLT:
         return root
 
     def delete(self, key): 
-        self.delete_node(self.root, key)
+        key_node = AVLT_Node(key, None)
+        self.delete_node(self.root, key_node)
         self.count -= 1
 
-    def delete_node(self, root, key):
+    def delete_node(self, root, key_node):
         # find the node to be deleted and remove it
         if not root:
             return root
-        elif key < root.key:
-            root.left = self.delete_node(root.left, key)
-        elif key > root.key:
-            root.right = self.delete_node(root.right, key)
-        else:
+
+        if self.equals(root, key_node):
             if root.left is None:
                 temp = root.right
                 root = None 
@@ -401,7 +522,7 @@ class AVLT:
                 return   
             else:
                 temp = self.find_min(root.right)
-                temp.right = self.delete_node(root.right, temp.key)
+                temp.right = self.delete_node(root.right, temp)
                 temp.left = root.left 
 
                 if root is self.root: 
@@ -414,6 +535,11 @@ class AVLT:
                     temp.parent = root.parent 
 
                 root = temp
+
+        elif self.comparator(key_node, root):
+            root.left = self.delete_node(root.left, key_node)
+        elif not self.comparator(key_node, root):
+            root.right = self.delete_node(root.right, key_node)
         
         if root is None:
             return root

@@ -10,28 +10,30 @@ print(f"> Tree Size: {bst.size()}")
 print()
 assert(bst.size() == 0)
 
-# insert items to the tree
-print(f"> Inserting items to the tree...")
-bst.insert(10, "a")
-bst.insert(20, "b")
-bst.insert(30, "c")
-bst.insert(40, "d")
-bst.insert(50, "e")
-bst.insert(60, "f")
-bst.insert(70, "g")
-bst.insert(80, "h")
-bst.insert(90, "i")
-bst.insert(100, "j")
+keys = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+values = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
+
+# insert keys to the tree
+print(f"> Inserting keys to the tree...")
+for i in range(len(keys)): 
+    bst.insert(keys[i], values[i])
 bst.display()
 print(f"> Tree Size: {bst.size()}")
 print()
 assert(bst.size() == 10)
 
+
+
 print("> Printing at values...")
-items = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-for i in range(len(items)): 
+for i in range(len(keys)): 
     print(f"> bst.at({i}) = {bst.at(i).key} -> {bst.at(i).value}")
-    assert(bst.at(i).key == items[i])
+    assert(bst.at(i).key == keys[i])
+print()
+
+print("> Index of keys...")
+for i in range(len(keys)): 
+    print(f"> bst.index({keys[i]}) = {bst.index(keys[i])}")
+    assert(bst.index(keys[i]) == i)
 print()
 
 print(f"Printing previous and next...")
@@ -39,8 +41,8 @@ prev_ = []
 next_ = [] 
 for item in bst.iterate(): 
     key = item.key
-    prev__ = bst.prev(key)
-    next__ = bst.next(key)
+    prev__ = bst.key_prev(key)
+    next__ = bst.key_next(key)
     
     print(f"@ item-{key} : ".ljust(20) + \
           f"prev ({prev__.key if prev__ else None}), " + \
@@ -58,15 +60,15 @@ print(f"> Keys: {list(bst.keys())}")
 print(f"> Values: {list(bst.values())}")
 print()
 
-# search items from the tree 
+# search keys from the tree 
 print(f"Finding 50: {bst.find(50)}")
 print(f"Finding -1: {bst.find(-1)}")
 print()
 assert(type(bst.find(50)) is AVLT_Node) 
 assert(bst.find(-1) is None)
 
-# delete items 
-print(f"Deleting items 20, 50, 70 from the tree..") 
+# delete keys 
+print(f"Deleting keys 20, 50, 70 from the tree..") 
 bst.delete(20)
 bst.delete(30) 
 bst.delete(50) 

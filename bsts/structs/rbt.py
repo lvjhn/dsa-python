@@ -25,20 +25,35 @@
                 - count 
             
             Utility Methods 
-                - size() 
                 - at(index)
+                - index(key)
+
+                - index_range(i, j) 
+                - key_range(key_a, key_b)
+                - key_range_forward(kn_a, kn_b) 
+                - key_range_backward(kn_a, kn_b) 
+                - find_vsplit_forward(kn_a, kn_b) 
+                - find_vsplit_backward(kn_a, kn_b
+
+                - size() 
+                
+                - find(key, root)
                 - find_min(root)  
                 - find_max(root) 
+                
                 - get_n_desc(root)
-                - find(key, root)
+                - update_n_desc(root)
+
                 - transplant(u, v)
                 - rebalance_insert(k)
                 - rebalance_delete(k)
+
                 - display() 
                 - display_node(root, indent, orient) 
+                
                 - prev(root)
                 - next(root)
-                - update_n_desc(root)
+                
 
             Rotation Methods
                 - left_rotate(x) 
@@ -84,6 +99,12 @@ class RBT():
     # UTILITY METHODS
     #
 
+    def comparator(self, a, b): 
+        return a.key < b.key 
+
+    def equals(self, a, b): 
+        return a.key == b.key
+
     def at(self, index): 
         current = self.root 
         lo = 0
@@ -98,22 +119,54 @@ class RBT():
             left = (lo, mid)
             right = (mid + 1, hi) 
 
-            # print(current.key, mid, lo, hi, left, right, current.n_desc)
 
             if index == mid: 
                 return current 
-            
+
             elif index >= left[0] and index <= left[1]: 
-                # print("@ left")
                 hi = mid - 1
                 current = current.left
 
             elif index >= right[0] and index <= right[1]:
-                # print("@ right")
                 lo = mid + 1
                 current = current.right
  
         return current 
+
+    
+    def index(self, key): 
+        current = self.root 
+        lo = 0
+        hi = self.size() - 1
+
+        key_node = RBT_Node(key, None)
+
+        while current is not self.TNULL: 
+            if current.left: 
+                mid = lo + current.left.n_desc
+            elif current.right: 
+                mid = lo
+            
+            left = (lo, mid)
+            right = (mid + 1, hi) 
+
+            if current.n_desc == 1 and key == current.key: 
+                return lo
+
+            elif self.equals(key_node, current): 
+                return mid 
+            
+            elif self.comparator(key_node, current): 
+                hi = mid - 1
+                current = current.left
+
+            elif not self.comparator(key_node, current):
+                lo = mid + 1
+                current = current.right
+ 
+        return None 
+
+    # INSERT RANGE QUERY FUNCTIONS HERE #
 
     def size(self): 
         return self.count 
@@ -124,14 +177,16 @@ class RBT():
         else: 
             current = root 
 
+        key_node = RBT_Node(key, None)
+
         while current is not self.TNULL: 
-            if key < current.key:
+            if self.equals(key_node, current): 
+                return current
+            elif self.comparator(key_node, current):
                 current = current.left
-            elif key > current.key: 
+            elif not self.comparator(key_node, current): 
                 current = current.right
-            else: 
-                return current 
-                
+             
         return None
 
     def find_min(self, root): 
@@ -417,7 +472,7 @@ class RBT():
 
         while x != self.TNULL:
             y = x
-            if node.key < x.key:
+            if self.comparator(node, x):
                 x = x.left
             else:
                 x = x.right
@@ -426,7 +481,7 @@ class RBT():
 
         if y == None:
             self.root = node
-        elif node.key < y.key:
+        elif self.comparator(node, y):
             y.left = node
         else:
             y.right = node
@@ -451,14 +506,16 @@ class RBT():
     def delete_key(self, node, key):
         z = self.TNULL
 
+        key_node = RBT_Node(key, None)
+
         while node is not self.TNULL:
-            if node.key == key:
+            if self.equals(key_node, node):
                 z = node
                 break            
-            elif node.key < key:
-                node = node.right
-            elif node.key > key:
+            elif self.comparator(key_node, node):
                 node = node.left
+            elif not self.comparator(key_node, node):
+                node = node.right
 
         if z == self.TNULL:
             print(f"{key} is not in the tree")
