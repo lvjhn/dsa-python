@@ -588,15 +588,15 @@ class RBT():
             x = z.right
             self.transplant(z, x)
 
-            self.set_prev(x, self.prev(z))
-            self.set_next(x, self.next(z))
+            self.set_prev(x, self.prev(x))
+            self.set_next(x, self.next(x))
            
         elif z.right is self.TNULL and z.left is not self.TNULL:
             x = z.left
             self.transplant(z, x)
 
-            self.set_prev(x, self.prev(z))
-            self.set_next(x, self.next(z))
+            self.set_prev(x, self.prev(x))
+            self.set_next(x, self.next(x))
         
         elif z.left is self.TNULL and z.right is self.TNULL:  
             x = z.parent
@@ -623,8 +623,8 @@ class RBT():
                 y.right = z.right
                 y.right.parent = y
 
-                self.set_prev(x, self.prev(z))
-                self.set_next(x, self.next(z))
+                self.set_prev(x, self.prev(x))
+                self.set_next(x, self.next(x))
 
             self.transplant(z, y)
 
@@ -632,8 +632,8 @@ class RBT():
             y.left.parent = y
             y.color = z.color
 
-            self.set_prev(y, self.prev(z))
-            self.set_next(y, self.next(z))
+            self.set_prev(y, self.prev(y))
+            self.set_next(y, self.next(y))
 
         if y_original_color == 0:
             self.rebalance_delete(x)

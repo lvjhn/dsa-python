@@ -164,6 +164,110 @@ class AVLT:
  
         return None 
 
+    def node_range(self, node_a, node_b): 
+        current = node_a
+
+        direction = 1
+        if not self.comparator(node_a, node_b): 
+            direction = -1
+
+        while current is not None: 
+            yield current
+            if current is node_b:
+                return 
+            
+            if direction == 1: 
+                current = current.next 
+            elif direction == -1: 
+                current = current.prev
+            else: 
+                raise Exception("Unknown direction.")
+
+    def key_range(self, key_a, key_b): 
+        kn_a = self.find(key_a) 
+        kn_b = self.find(key_b) 
+        yield from self.node_range(kn_a, kn_b)
+
+    def index_range(self, idx_a, idx_b): 
+        kn_a = self.at(idx_a) 
+        kn_b = self.at(idx_b)
+        yield from self.node_range(kn_a, kn_b)
+
+    def search_left_bound(self, value, rev = False): 
+        key_node = AVLT_Node(value, None)
+        current = self.root 
+        prev = None 
+
+        while current is not None: 
+            if self.equals(key_node, current): 
+                return current 
+            elif current.left is None and current.right is None: 
+                if not rev: 
+                    if self.comparator(key_node, current): 
+                        return prev 
+                    else: 
+                        return current
+                else: 
+                    if not self.comparator(key_node, current): 
+                        return current 
+                    else: 
+                        return prev
+            elif self.comparator(key_node, current): 
+                prev = current
+                current = current.left
+            elif not self.comparator(key_node, current):
+                prev = current
+                current = current.right 
+
+        return prev
+
+    def search_right_bound(self, value, rev = False): 
+        key_node = AVLT_Node(value, None)
+        current = self.root 
+        prev = None
+
+        while current is not None: 
+            if self.equals(key_node, current): 
+                return current 
+            elif current.left is None and current.right is None: 
+                if not rev: 
+                    if self.comparator(key_node, current): 
+                        return prev 
+                    else: 
+                        return current
+                else: 
+                    if not self.comparator(key_node, current): 
+                        return current  
+                    else: 
+                        return prev
+            elif self.comparator(key_node, current):
+                prev = current
+                current = current.left 
+            elif not self.comparator(key_node, current): 
+                prev = current
+                current = current.right
+        
+        return prev.parent
+        
+    def interval_nodes(self, a, b): 
+        kn_a = AVLT_Node(a, None) 
+        kn_b = AVLT_Node(b, None)
+
+        if self.comparator(kn_a, kn_b): 
+            x = self.search_left_bound(a)
+            y = self.search_right_bound(b) 
+            return x, y 
+        elif not self.comparator(kn_a, kn_b): 
+            x = self.search_right_bound(a, True) 
+            y = self.search_left_bound(b, True)
+            return x, y
+       
+        return a_node, b_node 
+
+    def interval_range(self, a, b): 
+        node_a, node_b = self.interval_nodes(a, b) 
+        yield from self.node_range(node_a, node_b)
+
     def size(self): 
         return self.count 
 

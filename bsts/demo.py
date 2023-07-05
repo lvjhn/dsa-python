@@ -4,7 +4,7 @@ from .structs.rbt import RBT, RBT_Node
 def main(): 
 
     # create stack
-    bst = RBT() 
+    bst = AVLT() 
 
     print(bst)
 
@@ -24,21 +24,33 @@ def main():
         print("=====================================")
     print()
 
-    # delete items from the tree
-    print(f"Deleting keys 20, 50, 70 from the tree..") 
-    to_delete = [20, 50, 70] 
-    for item in to_delete:
-        print(f"> Deleting {item}")
-        bst.delete(item)
-        bst.display() 
-        print("=====================================")
-    print() 
+    # # iterate over elements 
+    # for item in bst.iterate(): 
+    #     print(item.key)
+    # print()
 
-    # iterate over elements 
-    for item in bst.iterate(): 
+    # iterate over elements on key range 
+    nodes = bst.interval_nodes(70.5, 20.6)
+    print(nodes[0].key, nodes[1].key)
+    nodes = bst.interval_nodes(20.6, 70.5)
+    print(nodes[0].key, nodes[1].key)
+    print()
+
+    for item in bst.interval_range(20.6, 70.5): 
         print(item.key)
+    print()
 
-    bst.display()
+    # # delete items from the tree
+    # print(f"Deleting keys 20, 50, 70 from the tree..") 
+    # to_delete = [20, 50, 70] 
+    # for item in to_delete:
+    #     print(f"> Deleting {item}")
+    #     bst.delete(item)
+    #     bst.display() 
+    #     print("=====================================")
+    # print() 
+
+    # bst.display()
 
 def bench(): 
     for i in range(10000): 
