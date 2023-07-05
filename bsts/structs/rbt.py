@@ -202,7 +202,7 @@ class RBT():
 
     def find_min(self, root): 
         if root is self.TNULL: 
-            return None 
+            return self.TNULL 
 
         if root.left is self.TNULL and root.right is self.TNULL: 
             return root 
@@ -213,7 +213,7 @@ class RBT():
 
     def find_max(self, root): 
         if root is self.TNULL: 
-            return None 
+            return self.TNULL 
 
         if root.left is self.TNULL and root.right is self.TNULL: 
             return root 
@@ -334,6 +334,11 @@ class RBT():
         if root is self.TNULL:
             return 
 
+        left = \
+            root.left.key if root.left is not self.TNULL else 'TNULL'
+        right = \
+            root.right.key if root.right is not self.TNULL else 'TNULL'
+        
         print(
             "    " * indent + \
             f"{orient} : {root.key} -> " +
@@ -341,8 +346,8 @@ class RBT():
             f"v: {root.value}, " +
             f"pt: {root.parent.key if root.parent else None}, " + 
             f"nd: {root.n_desc}, " + 
-            f"l: {root.left.key if root.left else None}, " + 
-            f"r: {root.right.key if root.right else None}, " + 
+            f"l: {left}, " + 
+            f"r: {right}, " + 
             f"p: {root.prev.key if root.prev else None}, " +
             f"n: {root.next.key if root.next else None}" 
         )
@@ -373,12 +378,12 @@ class RBT():
 
     def prev(self, node):   
         if self.size() == 1: 
-            return None
+            return self.TNULL
 
-        if node.left is not None:  
+        if node.left is not self.TNULL:  
             return self.find_max(node.left)
 
-        if node.left is None: 
+        if node.left is self.TNULL: 
             if node.parent.right is node: 
                 return node.parent   
             else: 
@@ -388,10 +393,10 @@ class RBT():
                         break
                     current = current.parent
                     if current is self.root: 
-                        return None  
+                        return self.TNULL  
                 return current.parent 
 
-        return None 
+        return self.TNULL 
 
     def key_next(self, key): 
         node = self.find(key)
@@ -399,12 +404,12 @@ class RBT():
 
     def next(self, node): 
         if self.size() == 1: 
-            return None
+            return self.TNULL
 
-        if node.right is not None:  
+        if node.right is not self.TNULL:  
             return self.find_min(node.right)
 
-        if node.right is None: 
+        if node.right is self.TNULL: 
             if node.parent.left is node: 
                 return node.parent   
             else: 
@@ -414,10 +419,10 @@ class RBT():
                         break
                     current = current.parent
                     if current is self.root: 
-                        return None  
+                        return self.TNULL  
                 return current.parent 
 
-        return None 
+        return self.TNULL 
 
     def update_n_desc(self, root):
         current = root 
@@ -579,19 +584,30 @@ class RBT():
         y = z
         y_original_color = y.color
 
-        if z.left is self.TNULL:
+        if z.left is self.TNULL and z.right is not self.TNULL:
             x = z.right
             self.transplant(z, x)
 
-            self.set_prev(x, self.prev(x))
-            self.set_next(x, self.next(x))
+            self.set_prev(x, self.prev(z))
+            self.set_next(x, self.next(z))
            
-        elif z.right is self.TNULL:
+        elif z.right is self.TNULL and z.left is not self.TNULL:
             x = z.left
-            self.transplant(z, z.left)
+            self.transplant(z, x)
 
-            self.set_prev(x, self.prev(x))
-            self.set_next(x, self.next(x))
+            self.set_prev(x, self.prev(z))
+            self.set_next(x, self.next(z))
+        
+        elif z.left is self.TNULL and z.right is self.TNULL:  
+            x = z.parent
+
+            if z.parent.left is z: 
+                z.parent.left = self.TNULL 
+            else: 
+                z.parent.right = self.TNULL
+
+            self.set_prev(z.parent, self.prev(z.parent))
+            self.set_next(z.parent, self.next(z.parent))
 
         else:
             y = self.find_min(z.right)
@@ -607,8 +623,8 @@ class RBT():
                 y.right = z.right
                 y.right.parent = y
 
-                self.set_prev(x, self.prev(x))
-                self.set_next(x, self.next(x))
+                self.set_prev(x, self.prev(z))
+                self.set_next(x, self.next(z))
 
             self.transplant(z, y)
 
@@ -616,8 +632,8 @@ class RBT():
             y.left.parent = y
             y.color = z.color
 
-            self.set_prev(y, self.prev(y))
-            self.set_next(y, self.next(y))
+            self.set_prev(y, self.prev(z))
+            self.set_next(y, self.next(z))
 
         if y_original_color == 0:
             self.rebalance_delete(x)

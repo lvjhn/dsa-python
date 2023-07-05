@@ -139,7 +139,7 @@ class AVLT:
 
         key_node = AVLT_Node(key, None)
 
-        while current.leaf: 
+        while current is not None: 
             if current.left: 
                 mid = lo + current.left.n_desc
             elif current.right: 
@@ -327,7 +327,6 @@ class AVLT:
     #
 
     def left_rotate(self, x): 
-        print("Left Rotate")
         y = x.right
 
         x.right = y.left
@@ -365,7 +364,6 @@ class AVLT:
         return y
 
     def right_rotate(self, x): 
-        print("Right Rotate")
         y = x.left
         x.left = y.right
 

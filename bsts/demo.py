@@ -17,21 +17,21 @@ def main():
 
     # insert keys to the tree
     print(f"> Inserting keys to the tree...")
-    for i in range(100000): 
-        # print(f"> Inserting ({i * 10}, None)")
+    for i in range(1, 11): 
+        print(f"> Inserting ({i * 10}, None)")
         bst.insert(i * 10, None)
-        # bst.display() 
-        # print("=====================================")
+        bst.display() 
+        print("=====================================")
     print()
 
     # delete items from the tree
     print(f"Deleting keys 20, 50, 70 from the tree..") 
     to_delete = [20, 50, 70] 
     for item in to_delete:
-        # print(f"> Deleting {item}")
+        print(f"> Deleting {item}")
         bst.delete(item)
-        # bst.display() 
-        # print("=====================================")
+        bst.display() 
+        print("=====================================")
     print() 
 
     # iterate over elements 
