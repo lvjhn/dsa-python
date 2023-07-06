@@ -180,7 +180,7 @@ class RBT():
                 lo = mid + 1
                 current = current.right
  
-        return None 
+        return -1 
 
     def node_range(self, node_a, node_b): 
         current = node_a
@@ -355,7 +355,6 @@ class RBT():
     def display_node(self, root, indent, orient):
         if root is self.TNULL:
             return 
-
         left = \
             root.left.key if root.left is not self.TNULL else 'TNULL'
         right = \
@@ -370,21 +369,19 @@ class RBT():
             f"nd: {root.n_desc}, " + 
             f"l: {left}, " + 
             f"r: {right}, " + 
-            f"p: {root.prev.key if root.prev else None}, " +
-            f"n: {root.next.key if root.next else None}" 
+            f"p: {root.prev.key if root.prev else '[START : None]'}, " +
+            f"n: {root.next.key if root.next else '[END: None]'}" 
         )
         
         self.display_node(root.left, indent + 1, "left")
         self.display_node(root.right, indent + 1, "right")
     
     def iterate(self): 
-        def inorder(node):
-            if node.left is not self.TNULL: 
-                yield from inorder(node.left) 
-            yield node
-            if node.right is not self.TNULL:
-                yield from inorder(node.right)             
-        return inorder(self.root)
+        current = self.find_min(self.root) 
+        while current is not None:
+            yield current
+            current = current.next
+        return None
 
     def keys(self): 
         for item in self.iterate(): 
@@ -399,14 +396,12 @@ class RBT():
         return self.prev(node)
 
     def prev(self, node):   
-        if self.size() == 1: 
-            return self.TNULL
 
         if node.left is not self.TNULL:  
             return self.find_max(node.left)
 
         if node.parent is None: 
-            return self.TNULL
+            return None
 
         if node.left is self.TNULL: 
 
@@ -429,14 +424,12 @@ class RBT():
         return self.next(node)
 
     def next(self, node): 
-        if self.size() == 1: 
-            return self.TNULL
 
         if node.right is not self.TNULL:  
             return self.find_min(node.right)
 
         if node.parent is None:
-            return self.TNULL
+            return None
 
         if node.right is self.TNULL: 
             if node.parent.left is node: 
@@ -448,10 +441,10 @@ class RBT():
                         break
                     current = current.parent
                     if current is self.root: 
-                        return self.TNULL  
+                        return None 
                 return current.parent 
 
-        return self.TNULL 
+        return None
 
     def update_n_desc(self, root):
         current = root 
@@ -555,6 +548,8 @@ class RBT():
     #
 
     def left_rotate(self, x):
+        print(f"> Left Rotate {x.key} <")
+
         y = x.right
         x.right = y.left
         if y.left != self.TNULL:
@@ -575,14 +570,10 @@ class RBT():
         y.n_desc = \
             1 + self.get_n_desc(y.left) + self.get_n_desc(y.right)
 
-        max_right = self.find_min(x.right)
-        
-        if max_right: 
-            self.set_next(max_right, y) 
-
         return y
 
     def right_rotate(self, x):
+        print(f"> Right Rotate {x.key} <")
         y = x.left
         x.left = y.right
         if y.right != self.TNULL:
@@ -602,11 +593,6 @@ class RBT():
             1 + self.get_n_desc(x.left) + self.get_n_desc(x.right) 
         y.n_desc = \
             1 + self.get_n_desc(y.left) + self.get_n_desc(y.right)
-
-        min_left = self.find_min(x.left)
-        
-        if min_left: 
-            self.set_prev(min_left, y)
 
         return y
 
@@ -630,30 +616,51 @@ class RBT():
 
     def insert(self, key, value):
         node = RBT_Node(key, value)
+        
         node.parent = None
+
         node.left = self.TNULL
         node.right = self.TNULL
+
+        node.prev = None 
+        node.next = None
+
         node.color = 1
 
         self.insert_node(node)
         self.count += 1
-        
-        self.set_prev(node, self.prev(node))
-        self.set_next(node, self.next(node))
 
 
     def insert_node(self, node): 
         y = None
         x = self.root
 
+        direction = None
+        parent = None
+
+        if self.root == None: 
+            self.root = node 
+            return
+
         while x != self.TNULL:
             y = x
             if self.comparator(node, x):
+                parent = x 
                 x = x.left
+                direction = -1
             else:
+                parent = x
                 x = x.right
+                direction = 1
 
         node.parent = y
+
+        if direction == -1: 
+            self.set_prev(node, parent.prev) 
+            self.set_next(node, parent)
+        elif direction == 1: 
+            self.set_next(node, parent.next)
+            self.set_prev(node, parent) 
 
         if y == None:
             self.root = node
@@ -699,72 +706,172 @@ class RBT():
 
         return self.delete_node(z)
 
-    def delete_node(self, z): 
+     
+    def delete_node(self, z):
         y = z
         y_original_color = y.color
-
-        if z.left is self.TNULL and z.right is not self.TNULL:
-            x = z.right
-            self.transplant(z, x)
-
-            self.set_prev(x, self.prev(x))
-            self.set_next(x, self.next(x))
-           
-        elif z.right is self.TNULL and z.left is not self.TNULL:
+        p = z.parent 
+        x = None 
+        
+        if z.left is not self.TNULL and z.right is self.TNULL:
+            print(f"A {z.key}")
             x = z.left
             self.transplant(z, x)
 
-            self.set_prev(x, self.prev(x))
-            self.set_next(x, self.next(x))
-        
-        elif z.left is self.TNULL and z.right is self.TNULL:  
-            x = z.parent
+            if p: 
+                a = z.prev 
+                if p.left is z: 
+                    if a: 
+                        self.set_next(a, p) 
+                else: 
+                    if a: 
+                        self.set_next(a, z.next) 
+          
+        elif z.right is not self.TNULL and z.right is self.TNULL:
+            print(f"B {z.key}")
+            x = z.right
+            self.transplant(z, x)
 
-            if x is None: 
-                self.root = None 
-                return
+            if p: 
+                a = z.next 
+                if p.left is z: 
+                    if a: 
+                        self.set_prev(a, z.prev) 
+                else: 
+                    if a: 
+                        self.set_prev(a, p)
 
-            if x.left is z: 
-                x.left = self.TNULL 
+        elif z.left is self.TNULL and z.right is self.TNULL: 
+            print(f"C {z.key}")
+            x = p 
+            
+            if p is None: 
+                self.root = self.TNULL 
+                return self.TNULL
             else: 
-                x.right = self.TNULL
-
-            self.set_prev(x, self.prev(x))
-            self.set_next(x, self.next(x))
+                if p.left is z: 
+                    self.set_prev(p, z.prev)
+                    p.left = self.TNULL 
+                elif p.right is z: 
+                    self.set_next(p, z.next)
+                    p.right = self.TNULL 
 
         else:
+            print(f"D {z.key}")
             y = self.find_min(z.right)
             y_original_color = y.color
-
-            x = y.right
             
+            x = y.right
+
+            print(f"x: {x.key}, TNULL? {x is self.TNULL}")
+
+            a = z.prev 
+            b = y.next 
+
             if y.parent == z:
                 x.parent = y
             else:
                 self.transplant(y, x)
+                
+                h = y.next
+                self.set_prev(h, z.prev)
 
                 y.right = z.right
                 y.right.parent = y
 
-                self.set_prev(x, self.prev(x))
-                self.set_next(x, self.next(x))
-
             self.transplant(z, y)
+
+            if z.left: 
+                z.left.parent = y
+                if a: 
+                    self.set_next(a, y)
+                if b:
+                    self.set_prev(b, y)
 
             y.left = z.left
             y.left.parent = y
             y.color = z.color
-
-            self.set_prev(y, self.prev(y))
-            self.set_next(y, self.next(y))
-
-        if y_original_color == 0:
+            
+        if y_original_color == 0 and x is not self.TNULL:
             self.rebalance_delete(x)
 
         self.update_n_desc(z)
+ 
+    # def delete_node(self, z):
+    #     y = z
+    #     y_original_color = y.color
+    #     p = z.parent 
+    #     x = None 
+        
+    #     if z.left is not self.TNULL and z.right is self.TNULL:
+    #         print(f"A {z.key}")
+    #         x = z.left
+    #         self.transplant(z, x)
+
+    #         self.set_prev(x, self.prev(x)) 
+    #         self.set_next(x, self.next(x))
+
+    #     elif z.right is not self.TNULL and z.right is self.TNULL:
+    #         print(f"B {z.key}")
+    #         x = z.right
+    #         self.transplant(z, x)
+
+    #         self.set_prev(x, self.prev(x)) 
+    #         self.set_next(x, self.next(x))
+
+    #     elif z.left is self.TNULL and z.right is self.TNULL: 
+    #         print(f"C {z.key}")
+    #         x = p 
+            
+    #         if p is None: 
+    #             self.root = self.TNULL 
+    #             return self.TNULL
+    #         else: 
+    #             if p.left is z: 
+    #                 p.left = self.TNULL 
+    #             elif p.right is z: 
+    #                 p.right = self.TNULL 
+            
+    #         self.set_prev(p, self.prev(p)) 
+    #         self.set_next(p, self.next(p)) 
+
+    #     else:
+    #         print(f"D {z.key}")
+    #         y = self.find_min(z.right)
+    #         y_original_color = y.color
+            
+    #         x = y.right
+
+    #         print(f"x: {x.key}, TNULL? {x is self.TNULL}")
+
+    #         if y.parent == z:
+    #             x.parent = y
+    #         else:
+    #             self.transplant(y, x)
+
+    #             if x is not self.TNULL:
+    #                 self.set_prev(x, self.prev(x)) 
+    #                 self.set_next(x, self.next(x))
+
+    #             y.right = z.right
+    #             y.right.parent = y
+
+    #         self.transplant(z, y)
+
+    #         self.set_prev(y, self.prev(y)) 
+    #         self.set_next(y, self.next(y))
+
+    #         y.left = z.left
+    #         y.left.parent = y
+    #         y.color = z.color
+            
+    #     if y_original_color == 0 and x is not self.TNULL:
+    #         self.rebalance_delete(x)
+
+    #     self.update_n_desc(z)
 
     def clear(self): 
-        self.root = None 
+        self.root = self.TNULL 
         self.count = 0  
 
     def update(self, key, value): 

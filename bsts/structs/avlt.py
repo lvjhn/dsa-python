@@ -441,12 +441,12 @@ class AVLT:
         yield from self.node_range(node_a, node_b)
 
 
-
     #
     # ROTATION METHODS
     #
 
     def left_rotate(self, x): 
+        # print("> Left Rotate <")
         y = x.right
 
         x.right = y.left
@@ -476,14 +476,10 @@ class AVLT:
         y.n_desc = \
             1 + self.get_n_desc(y.left) + self.get_n_desc(y.right)
 
-        max_right = self.find_min(x.right)
-        
-        if max_right: 
-            self.set_next(max_right, y) 
-
         return y
 
     def right_rotate(self, x): 
+        # print("> Right Rotate <")
         y = x.left
         x.left = y.right
 
@@ -510,11 +506,6 @@ class AVLT:
             1 + self.get_n_desc(x.left) + self.get_n_desc(x.right) 
         y.n_desc = \
             1 + self.get_n_desc(y.left) + self.get_n_desc(y.right)
-        
-        min_left = self.find_min(x.left)
-        
-        if min_left: 
-            self.set_prev(min_left, y)
 
         return y
 
@@ -549,26 +540,34 @@ class AVLT:
     def insert(self, key, value): 
         node = AVLT_Node(key, value) 
         
-        self.insert_node(self.root, node, None)
+        self.insert_node(self.root, node, None, 0)
         self.count += 1
-
-        self.set_prev(node, self.prev(node))
-        self.set_next(node, self.next(node))
 
         return node
 
-    def insert_node(self, root, node, parent): 
-        # find the correct location and insert the node
+    def insert_node(self, root, node, parent, direction): 
+
         if self.root is None: 
             self.root = node
             return node
+        
         elif not root:
             node.parent = parent
+
+            if direction == -1: 
+                self.set_prev(node, parent.prev) 
+                self.set_next(node, parent)
+            elif direction == 1: 
+                self.set_next(node, parent.next)
+                self.set_prev(node, parent) 
+
             return node
+        
         elif self.comparator(node, root):
-            root.left = self.insert_node(root.left, node, root)
+            root.left = self.insert_node(root.left, node, root, -1)
+        
         else:
-            root.right = self.insert_node(root.right, node, root)
+            root.right = self.insert_node(root.right, node, root, 1)
 
         root.height = 1 + max(self.get_height(root.left),
                               self.get_height(root.right))
@@ -598,64 +597,85 @@ class AVLT:
         self.count -= 1
 
     def delete_node(self, root, key_node):
-        # find the node to be deleted and remove it
         if not root:
             return root
 
         if self.equals(root, key_node):
-            if root.left is None and root.right is not None:
-                temp = root.right
-                temp.parent = root.parent
-                
-                self.set_prev(temp, self.prev(temp))
-                self.set_next(temp, self.next(temp))
-                
-                return temp
-            
-            elif root.right is None and root.left is not None:
+        
+            if root.left is not None and root.right is None:
+                parent = root.parent 
                 temp = root.left
-                temp.parent = root.parent
+                temp.parent = parent
+                 
+                if parent: 
+                    a = root.prev 
+                    if parent.left is root: 
+                        if a: 
+                            self.set_next(a, parent) 
+                    else:  
+                        if a: 
+                            self.set_next(a, root.next)
 
-                self.set_prev(temp, self.prev(temp))
-                self.set_next(temp, self.next(temp)) 
+                return temp
+
+            elif root.right is not None and root.right is None:
+                parent = root.parent 
+                temp = root.right
+                temp.parent = parent
+
+                if parent: 
+                    a = root.next 
+                    if parent.left is root: 
+                        if a: 
+                            self.set_prev(a, root.prev) 
+                    else: 
+                        if a: 
+                            self.set_prev(a, parent)
 
                 return temp
 
             elif root.left is None and root.right is None: 
-                
-                if root.parent is None: 
+                parent = root.parent 
+
+                if parent is None: 
                     self.root = None    
                     return 
-                
-                if root.parent.left is root: 
-                    root.parent.left = None 
                 else: 
-                    root.parent.right = None
+                    if parent.left is root: 
+                        self.set_prev(parent, root.prev)
+                        parent.left = None 
+                    elif parent.right is root:
+                        self.set_next(parent, root.next) 
+                        parent.right = None
    
-                self.set_prev(root.parent, self.prev(root.parent))
-                self.set_next(root.parent, self.next(root.parent))
-
                 return   
             else:
+                parent = root.parent
+                
                 temp = self.find_min(root.right)
+                
+                a = root.prev 
+                b = temp.next 
+
                 temp.right = self.delete_node(root.right, temp)
                 temp.left = root.left 
-
-                if root.left: 
-                    root.left.parent = temp
 
                 if root is self.root: 
                     self.root = temp
                 else: 
-                    if root.parent.left is root: 
-                        root.parent.left = temp 
+                    if parent.left is root: 
+                        parent.left = temp 
                     else: 
-                        root.parent.right = temp
-                    
-                    temp.parent = root.parent   
+                        parent.right = temp
 
-                self.set_prev(temp, self.prev(temp)) 
-                self.set_next(temp, self.next(temp))
+                if root.left: 
+                    root.left.parent = temp
+                    if a: 
+                        self.set_next(a, temp)
+                    if b:
+                        self.set_prev(b, temp)
+                    
+                temp.parent = parent   
 
                 root = temp
 
