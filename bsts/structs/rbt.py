@@ -405,7 +405,11 @@ class RBT():
         if node.left is not self.TNULL:  
             return self.find_max(node.left)
 
+        if node.parent is None: 
+            return self.TNULL
+
         if node.left is self.TNULL: 
+
             if node.parent.right is node: 
                 return node.parent   
             else: 
@@ -430,6 +434,9 @@ class RBT():
 
         if node.right is not self.TNULL:  
             return self.find_min(node.right)
+
+        if node.parent is None:
+            return self.TNULL
 
         if node.right is self.TNULL: 
             if node.parent.left is node: 
@@ -713,13 +720,17 @@ class RBT():
         elif z.left is self.TNULL and z.right is self.TNULL:  
             x = z.parent
 
-            if z.parent.left is z: 
-                z.parent.left = self.TNULL 
-            else: 
-                z.parent.right = self.TNULL
+            if x is None: 
+                self.root = None 
+                return
 
-            self.set_prev(z.parent, self.prev(z.parent))
-            self.set_next(z.parent, self.next(z.parent))
+            if x.left is z: 
+                x.left = self.TNULL 
+            else: 
+                x.right = self.TNULL
+
+            self.set_prev(x, self.prev(x))
+            self.set_next(x, self.next(x))
 
         else:
             y = self.find_min(z.right)

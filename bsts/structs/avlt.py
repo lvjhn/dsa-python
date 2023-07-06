@@ -285,6 +285,9 @@ class AVLT:
         if node.left is not None:  
             return self.find_max(node.left)
 
+        if node.parent is None: 
+            return None
+
         if node.left is None: 
             if node.parent.right is node: 
                 return node.parent   
@@ -310,6 +313,9 @@ class AVLT:
 
         if node.right is not None:  
             return self.find_min(node.right)
+
+        if node.parent is None: 
+            return None
 
         if node.right is None: 
             if node.parent.left is node: 
@@ -617,6 +623,10 @@ class AVLT:
 
             elif root.left is None and root.right is None: 
                 
+                if root.parent is None: 
+                    self.root = None    
+                    return 
+                
                 if root.parent.left is root: 
                     root.parent.left = None 
                 else: 
@@ -656,6 +666,10 @@ class AVLT:
         
         if root is None:
             return root
+
+        # update number of descendants 
+        root.n_desc = 1 + self.get_n_desc(root.left) + \
+                          self.get_n_desc(root.right) 
 
         # update the balance factor of nodes
         root.height = 1 + max(self.get_height(root.left),
