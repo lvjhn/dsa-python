@@ -548,8 +548,6 @@ class RBT():
     #
 
     def left_rotate(self, x):
-        print(f"> Left Rotate {x.key} <")
-
         y = x.right
         x.right = y.left
         if y.left != self.TNULL:
@@ -573,7 +571,6 @@ class RBT():
         return y
 
     def right_rotate(self, x):
-        print(f"> Right Rotate {x.key} <")
         y = x.left
         x.left = y.right
         if y.right != self.TNULL:
@@ -714,7 +711,6 @@ class RBT():
         x = None 
         
         if z.left is not self.TNULL and z.right is self.TNULL:
-            print(f"A {z.key}")
             x = z.left
             self.transplant(z, x)
 
@@ -728,7 +724,6 @@ class RBT():
                         self.set_next(a, z.next) 
           
         elif z.right is not self.TNULL and z.right is self.TNULL:
-            print(f"B {z.key}")
             x = z.right
             self.transplant(z, x)
 
@@ -742,7 +737,6 @@ class RBT():
                         self.set_prev(a, p)
 
         elif z.left is self.TNULL and z.right is self.TNULL: 
-            print(f"C {z.key}")
             x = p 
             
             if p is None: 
@@ -757,13 +751,10 @@ class RBT():
                     p.right = self.TNULL 
 
         else:
-            print(f"D {z.key}")
             y = self.find_min(z.right)
             y_original_color = y.color
             
             x = y.right
-
-            print(f"x: {x.key}, TNULL? {x is self.TNULL}")
 
             a = z.prev 
             b = y.next 
@@ -797,79 +788,6 @@ class RBT():
 
         self.update_n_desc(z)
  
-    # def delete_node(self, z):
-    #     y = z
-    #     y_original_color = y.color
-    #     p = z.parent 
-    #     x = None 
-        
-    #     if z.left is not self.TNULL and z.right is self.TNULL:
-    #         print(f"A {z.key}")
-    #         x = z.left
-    #         self.transplant(z, x)
-
-    #         self.set_prev(x, self.prev(x)) 
-    #         self.set_next(x, self.next(x))
-
-    #     elif z.right is not self.TNULL and z.right is self.TNULL:
-    #         print(f"B {z.key}")
-    #         x = z.right
-    #         self.transplant(z, x)
-
-    #         self.set_prev(x, self.prev(x)) 
-    #         self.set_next(x, self.next(x))
-
-    #     elif z.left is self.TNULL and z.right is self.TNULL: 
-    #         print(f"C {z.key}")
-    #         x = p 
-            
-    #         if p is None: 
-    #             self.root = self.TNULL 
-    #             return self.TNULL
-    #         else: 
-    #             if p.left is z: 
-    #                 p.left = self.TNULL 
-    #             elif p.right is z: 
-    #                 p.right = self.TNULL 
-            
-    #         self.set_prev(p, self.prev(p)) 
-    #         self.set_next(p, self.next(p)) 
-
-    #     else:
-    #         print(f"D {z.key}")
-    #         y = self.find_min(z.right)
-    #         y_original_color = y.color
-            
-    #         x = y.right
-
-    #         print(f"x: {x.key}, TNULL? {x is self.TNULL}")
-
-    #         if y.parent == z:
-    #             x.parent = y
-    #         else:
-    #             self.transplant(y, x)
-
-    #             if x is not self.TNULL:
-    #                 self.set_prev(x, self.prev(x)) 
-    #                 self.set_next(x, self.next(x))
-
-    #             y.right = z.right
-    #             y.right.parent = y
-
-    #         self.transplant(z, y)
-
-    #         self.set_prev(y, self.prev(y)) 
-    #         self.set_next(y, self.next(y))
-
-    #         y.left = z.left
-    #         y.left.parent = y
-    #         y.color = z.color
-            
-    #     if y_original_color == 0 and x is not self.TNULL:
-    #         self.rebalance_delete(x)
-
-    #     self.update_n_desc(z)
-
     def clear(self): 
         self.root = self.TNULL 
         self.count = 0  

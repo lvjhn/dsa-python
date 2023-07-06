@@ -76,7 +76,7 @@ def bench(BST):
     print(BST)
     bst = BST()
 
-    N_ITEMS = 500000
+    N_ITEMS = 100000
 
     print("> Benchmarking insertion...")
     a1 = time.time()
@@ -100,6 +100,6 @@ def bench(BST):
     print("Look-up:", str(b2 - a2).format("{:.3f}"))
     print("Deletion:", str(b3 - a3).format("{:.3f}"))
 
-main()
-# bench(AVLT)
-# bench(RBT)
+# main()
+bench(AVLT)
+bench(RBT)
