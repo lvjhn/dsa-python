@@ -109,6 +109,7 @@ class KBH:
         self.key_map[arr[i].key] = j
         self.key_map[arr[j].key] = i
 
+
     def bubble_down(self, arr, i):
         n = len(arr)
 
@@ -153,7 +154,7 @@ class KBH:
         i = self.key_map[key] 
         arr[i].value = value
         n = len(arr)
-        self.bubble_down(arr, i)
+        self.bubble_down(arr, i) 
 
     def display(self): 
         text = [] 

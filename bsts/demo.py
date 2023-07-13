@@ -12,6 +12,7 @@ def main():
     for i in range(1, N_ITEMS + 1): 
         for j in range(1, N_ITEMS + 1):
             if i > j: continue
+            
             to_delete = items[i:j+1]
             print(f"To Delete: {to_delete}")
             
@@ -52,7 +53,6 @@ def main():
 
             # delete items from the tree
             print(f"Deleting keys from the tree..") 
-            
 
             for item in to_delete:
                 print(f"> Deleting {item}")
